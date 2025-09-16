@@ -29,9 +29,9 @@ SECRET_KEY = 'django-insecure-apb9(q+r3f-n264j7kyy*y$c&tkm@q55ls_r(ke9jtjc98rq75
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '9469844d47bd.ngrok-free.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '4d2a477fdc4a.ngrok-free.app']
 CSRF_TRUSTED_ORIGINS = [
-    'https://9469844d47bd.ngrok-free.app',
+    'https://4d2a477fdc4a.ngrok-free.app',
 ]
 
 LOGIN_REDIRECT_URL = "/controle/"         # Para onde ir depois do login
@@ -125,11 +125,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'  # GMT-3
+USE_TZ = True
 
 USE_I18N = True
 
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

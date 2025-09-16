@@ -106,10 +106,23 @@
         </div>
     </a>
 </div>
-
-<!-- Card Abastecimentos -->
+<!-- Card Gestão de Pedágio -->
 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
     <a href="#" class="text-decoration-none text-dark">
+        <div class="card border-1 shadow-sm small-card h-100 hover-shadow">
+            <div class="card-body d-flex align-items-center">
+                <i class="fas fa-road fa-2x me-3 text-warning"></i>
+                <div class="text-start">
+                    <h6 class="mb-1 fw-bold">Pedágios</h6>
+                    <p class="mb-0 text-muted small">Gerencie histórico de liberações e solicitações.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+<!-- Card Abastecimentos -->
+<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+    <a href="{% url 'abastecimentos' %}" class="text-decoration-none text-dark">
         <div class="card border-1 shadow-sm small-card h-100 hover-shadow">
             <div class="card-body d-flex align-items-center">
                 <i class="fas fa-gas-pump fa-2x me-3 text-warning"></i>
@@ -139,7 +152,7 @@
 
 <!-- Card Usuários -->
 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-    <a href="#" class="text-decoration-none text-dark">
+    <a href="{% url 'lista_usuarios' %}" class="text-decoration-none text-dark">
         <div class="card border-1 shadow-sm small-card h-100 hover-shadow">
             <div class="card-body d-flex align-items-center">
                 <i class="fas fa-users-cog fa-2x me-3 text-primary"></i>
@@ -151,6 +164,21 @@
         </div>
     </a>
 </div>
+<!-- Card Registro de Logs -->
+<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+    <a href="{% url 'logs_todos' %}" class="text-decoration-none text-dark">
+        <div class="card border-1 shadow-sm small-card h-100 hover-shadow">
+            <div class="card-body d-flex align-items-center">
+                <i class="fas fa-file-alt fa-2x me-3 text-primary"></i>
+                <div class="text-start">
+                    <h6 class="mb-1 fw-bold">Logs</h6>
+                    <p class="mb-0 text-muted small">Consulte registros de atividades do sistema.</p>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+
 
 
     </div>

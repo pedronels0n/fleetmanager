@@ -10,8 +10,10 @@ import base64
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q  # necessário para filtros complexos
-from .utils import buscar_abastecimentos
+from .utils import buscar_abastecimentos, buscar_abastecimentos_por_data, buscar_abastecimentos_recentes, acessar_abastecimento_externo
 from django.utils.text import slugify
+from itertools import chain
+import os
 
 @login_required
 def home(request):
@@ -342,8 +344,11 @@ def excluir_veiculo(request, pk):
 
     return redirect('listar_veiculo')
 
-from itertools import chain
 
+
+# ------------ VISUALIZAR LOGS --------------
+
+@login_required
 def logs_todos(request):
     logs_motorista = Motorista.history.all()
     logs_veiculo = Veiculo.history.all()
@@ -398,3 +403,79 @@ def logs_todos(request):
         })
 
     return render(request, 'controle/logs_todos.html', {'logs': logs_processados})
+
+
+def lista_abastecimentos(request):
+    data_inicio = request.GET.get("data_inicio")
+    data_fim = request.GET.get("data_fim")
+
+    if data_inicio and data_fim:
+        # Se o usuário colocou datas, busca pelo intervalo
+        abastecimentos = buscar_abastecimentos_por_data(
+            data_inicio=data_inicio,
+            data_fim=data_fim
+        )
+    else:
+        # Caso contrário, pega os abastecimentos de hoje
+        abastecimentos = buscar_abastecimentos_recentes()
+
+    return render(request, "controle/abastecimento.html", {
+        "abastecimentos": abastecimentos,
+        "data_inicio": data_inicio or "",
+        "data_fim": data_fim or "",
+    })
+
+
+def acessar_abastecimento(request, cod_abastecimento):
+
+    # Chama a função do utils.py que faz login e retorna o HTML da página externa
+    html = acessar_abastecimento_externo(cod_abastecimento)
+
+    if not html:
+        return HttpResponse("Falha no login no site externo.", status=403)
+
+    # Retorna o HTML da página externa diretamente no navegador
+    return redirect(html)
+
+
+
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
+from .forms import UserForm
+from django.contrib import messages
+
+def lista_usuarios(request):
+    usuarios = User.objects.all()
+    return render(request, "controle/listar_usuarios.html", {"usuarios": usuarios})
+
+def criar_usuario(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Usuário criado com sucesso!")
+            return redirect("lista_usuarios")
+    else:
+        form = UserForm()
+    return render(request, "controle/usuarios_form.html", {"form": form, "titulo": "Criar Usuário"})
+
+def editar_usuario(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == "POST":
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Usuário atualizado com sucesso!")
+            return redirect("lista_usuarios")
+    else:
+        form = UserForm(instance=user)
+    return render(request, "controle/usuarios_form.html", {"form": form, "titulo": "Editar Usuário"})
+
+def deletar_usuario(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == "POST":
+        user.delete()
+        messages.success(request, "Usuário deletado com sucesso!")
+        return redirect("lista_usuarios")
+    return render(request, "usuarios/confirm_delete.html", {"usuario": user})

@@ -23,4 +23,12 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(template_name="controle/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
     path('logs/', views.logs_todos, name='logs_todos'),
+    path('abastecimentos/', views.lista_abastecimentos, name='abastecimentos' ),
+    path('abastecimento/detalhe/<int:cod_abastecimento>/', views.acessar_abastecimento, name='detalhe_abastecimento'),
+    path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
+    path('usuarios/novo/', views.criar_usuario, name='criar_usuario'),
+    path('usuarios/<int:pk>/editar/', views.editar_usuario, name='editar_usuario'),
+    path('usuarios/<int:pk>/excluir/', views.deletar_usuario, name='excluir_usuario'),
+
+
 ]

@@ -1,5 +1,6 @@
 from django import forms
 from .models import Motorista, TermoResponsabilidade, Veiculo
+from django.contrib.auth.models import User, Group
 
 class VeiculoForm(forms.ModelForm):
     class Meta:
@@ -44,3 +45,25 @@ class TermoResponsabilidadeForm(forms.ModelForm):
     class Meta:
         model = TermoResponsabilidade
         fields = "__all__"
+
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, required=False)
+    grupos = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password', 'is_staff', 'is_active', 'grupos']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if self.cleaned_data['password']:
+            user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+            user.groups.set(self.cleaned_data['grupos'])
+        return user

@@ -131,6 +131,12 @@
             <p class="mb-0">
               <strong>Posto:</strong> {{ a.posto }}
             </p>
+             <a href="{% url 'detalhe_abastecimento' a.codAbastecimento %}" 
+     class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-1 p-1"
+     target="_blank"
+     title="Detalhes">
+      🔍
+  </a>
           </div>
         </div>
       </div>

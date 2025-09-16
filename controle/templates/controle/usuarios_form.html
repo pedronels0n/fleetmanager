@@ -1,0 +1,70 @@
+{% extends "controle/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="mb-4">{{ title }}</h3>
+
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+
+        <div class="col-md-6">
+            <label class="form-label">Usuário</label>
+            {{ form.username|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            {{ form.email|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Nome</label>
+            {{ form.first_name|add_class:"form-control mb-1" }}
+            {{ form.last_name|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Senha</label>
+            {{ form.password|add_class:"form-control" }}
+            <small class="text-muted">Deixe em branco para não alterar</small>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Grupos</label>
+            <div class="d-flex flex-wrap gap-2">
+                {% for grupo in form.grupos %}
+                    <div class="form-check">
+                        {{ grupo.tag }}
+                        {{ grupo.choice_label }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-12">
+            <label class="form-check-label me-2">{{ form.is_staff }} Staff</label>
+            <label class="form-check-label">{{ form.is_active }} Ativo</label>
+        </div>
+
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-dark">Salvar</button>
+            <a href="{% url 'lista_usuarios' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const usernameInput = form.querySelector("input[name='username']");
+
+    form.addEventListener("submit", function () {
+        if (usernameInput) {
+            usernameInput.value = usernameInput.value.toLowerCase().trim();
+        }
+    });
+});
+</script>
+{% endblock %}
