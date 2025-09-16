@@ -1,0 +1,150 @@
+{% extends "controle/base.html" %}
+{% block title %}Lista de Veículos{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="m-0">Veículos</h2>
+    <a href="{% url 'criar_veiculo'%}" class="btn btn-primary">Adicionar Veículo</a>
+  </div>
+
+  <!-- Formulário de busca e ordenação -->
+<!-- Formulário de busca -->
+<form method="get" class="row g-2 mb-4">
+  <!-- Filtro por placa -->
+  <div class="col-md-3">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar por placa">
+  </div>
+
+  <!-- Filtro por setor -->
+  <div class="col-md-3">
+    <select name="setor" class="form-select">
+      <option value="">Todos os setores</option>
+      {% for s in setores %}
+        <option value="{{ s.id }}" {% if s.id|stringformat:"s" == setor_id %}selected{% endif %}>
+          {{ s.nome }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Filtro por status -->
+  <div class="col-md-3">
+    <select name="status" class="form-select">
+      <option value="">Todos os status</option>
+      {% for key, label in status_choices %}
+        <option value="{{ key }}" {% if key == status %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Botão filtrar -->
+  <div class="col-md-3">
+    <button type="submit" class="btn btn-outline-secondary w-100">Filtrar</button>
+  </div>
+</form>
+{% load static %}
+
+<div class="row">
+  {% for v in veiculo %}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex align-items-center p-2">
+          
+          <!-- Imagem do veículo à esquerda -->
+          <div class="me-2">
+            {% if v.tipo_modelo == "SUV" %}
+              <img src="{% static 'controle/img/SUV3.png' %}" alt="SUV" width="100" height="60">
+            {% elif v.tipo_modelo == "SEDAN" %}
+              <img src="{% static 'controle/img/SEDAN.png' %}" alt="SEDAN" width="100" height="100">
+            {% elif v.tipo_modelo == "HATCH" %}
+              <img src="{% static 'controle/img/HATCH.png' %}" alt="HATCH" width="100" height="70">
+            {% elif v.tipo_modelo == "VAN" %}
+              <img src="{% static 'controle/img/VAN.png' %}" alt="VAN" width="100" height="90">
+            {% elif v.tipo_modelo == "MINIVAN" %}
+              <img src="{% static 'controle/img/MINIVAN.png' %}" alt="MINIVAN" width="100" height="80">
+            {% elif v.tipo_modelo == "UTILITARIO" %}
+              <img src="{% static 'controle/img/UTILITARIO.png' %}" alt="UTILITARIO" width="100" height="75">
+            {% elif v.tipo_modelo == "ONIBUS" %}
+              <img src="{% static 'controle/img/ONIBUS.png' %}" alt="ONIBUS" width="100" height="70">
+            {% elif v.tipo_modelo == "CAMINHAO" %}
+              <img src="{% static 'controle/img/CAMINHAO.png' %}" alt="CAMINHAO" width="100" height="100">
+            {% elif v.tipo_modelo == "MOTO" %}
+              <img src="{% static 'controle/img/MOTO.png' %}" alt="MOTO" width="100" height="90">
+            {% elif v.tipo_modelo == "PICKUP" %}
+              <img src="{% static 'controle/img/PICKUP.png' %}" alt="PICKUP" width="100" height="75">
+            {% else %}
+              <i class="bi bi-car-front fs-4 text-secondary"></i>
+            {% endif %}
+          </div>
+
+          <!-- Informação do veículo -->
+          <div class="flex-grow-1 ms-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <!-- Placa como badge -->
+              <span class="badge bg-light text-dark border fw-bold">{{ v.placa }}</span>
+
+              
+              <!-- Status colorido -->
+              {% if v.get_status_atual_display == "Ativo" %}
+                <span class="badge bg-success">{{ v.get_status_atual_display }}</span>
+              {% elif v.get_status_atual_display == "Inativo" %}
+                <span class="badge bg-secondary">{{ v.get_status_atual_display }}</span>
+              {% elif v.get_status_atual_display == "Em manutenção" %}
+                <span class="badge bg-warning text-dark">{{ v.get_status_atual_display }}</span>
+              {% elif v.get_status_atual_display == "Vendido" %}
+                <span class="badge bg-danger">{{ v.get_status_atual_display }}</span>
+              {% else %}
+                <span class="badge bg-light text-dark">{{ v.get_status_atual_display }}</span>
+              {% endif %}
+            </div>
+            
+            <!-- Marca, modelo e tipo -->
+            <small class="text-muted d-block">{{ v.marca }} / {{ v.modelo }}</small>
+            <small class="text-muted d-block">{{ v.tipo_modelo }}</small>
+          </div>
+
+          <!-- Botões à direita -->
+          <div class="ms-2 d-flex flex-column gap-1">
+          {% if request.user.is_superuser %}
+              <a href="{% url 'detalhar_veiculo' v.id %}" class="btn btn-sm btn-outline-info">👁</a>
+          {% endif %}
+            <a href="{% url 'editar_veiculo' v.id %}" class="btn btn-sm btn-outline-warning">✏️</a>
+            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalExcluir{{ v.pk }}">
+    🗑
+</button>
+          </div>
+<div class="modal fade" id="modalExcluir{{ v.pk }}" tabindex="-1" aria-labelledby="modalExcluirLabel{{ v.pk }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content rounded shadow-sm">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="modalExcluirLabel{{ v.pk }}">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja excluir o veículo <strong>{{ v.placa }} - {{ v.marca }} {{ v.modelo }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <form method="post" action="{% url 'excluir_veiculo' v.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger rounded-pill px-4">Excluir</button>
+        </form>
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12 text-center">
+      <div class="alert alert-warning">Nenhum veículo encontrado.</div>
+    </div>
+  {% endfor %}
+</div>
+
+
+</div>
+{% endblock %}

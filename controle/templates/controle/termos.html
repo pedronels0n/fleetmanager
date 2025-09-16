@@ -1,0 +1,45 @@
+{% extends "controle/base.html" %}
+
+{% block title %}Lista de Termos{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <!-- Informações do condutor -->
+    <div class="card shadow-sm rounded mb-4 p-3 d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h4 class="mb-1">{{ motorista.nome }}</h4>
+            <small class="text-muted">
+                CPF: {{ motorista.cpf }} | CNH: {{ motorista.cnh_numero }} | Categoria: {{ motorista.cnh_categoria }}
+            </small>
+        </div>
+        <!-- Botão Vincular Veículo -->
+        <a href="{% url 'assinatura' pk=motorista.id %}" 
+           class="btn btn-success rounded-pill mt-2 mt-md-0 px-4 shadow-sm">
+           Vincular Veículo
+        </a>
+    </div>
+
+    <!-- Lista de termos -->
+    {% if termos %}
+        <div class="row g-3">
+            {% for termo in termos %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm rounded h-100 p-3">
+                        <h6 class="mb-2">Veículo: {{ termo.veiculo }}</h6>
+                        <p class="mb-2"><strong>Data da Assinatura:</strong> {{ termo.data_assinatura|date:"d/m/Y" }}</p>
+                        <a href="{% url 'termo_responsabilidade' veiculo_id=termo.veiculo.id motorista_id=termo.motorista.id %}" 
+                           class="btn btn-primary btn-sm rounded-pill">
+                           Visualizar
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">Nenhum termo cadastrado ainda.</div>
+    {% endif %}
+
+    <a href="{% url 'lista_motorista' %}" class="btn btn-secondary mt-4 rounded-pill">Voltar</a>
+</div>
+{% endblock %}
+

@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Termo de Responsabilidade</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            margin: 1cm 1cm 1cm 1cm;
+            text-align: justify;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 100px;
+        }
+
+        .header-text {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-size: 11pt;
+        }
+
+        .assinatura {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        ol {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://www.laurodefreitas.ba.gov.br/site/LogoLauro_Horizontal1.jpg" alt="Logo da PREFEITURA"
+ class="logo">
+    <div class="header-text">
+        <strong>PREFEITURA MUNICIPAL DE LAURO DE FREITAS – BA<br>
+        SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO - SECAD</strong>
+    </div>
+</header>
+
+<strong>
+    <p style="text-align: center;">TERMO DE RESPONSABILIDADE POR UTILIZAÇÃO DE VEÍCULO DA PREFEITURA DIPONIBILIZADO A SECRETARIA {{ veiculo.setor.nome }}.</p>
+</strong>
+
+<p>
+Pelo presente instrumento de TERMO DE RESPONSABILIDADE POR UTILIZAÇÃO DE VEÍCULO DA PREFEITURA MUNICIPAL DE LAURO DE FREITAS, doravante denominada simplesmente “<strong>PREFEITURA</strong> ”, e de outro lado <strong>{{ motorista.nome }}</strong>, portador da carteira Nacional de Habilitação nº <strong>{{ motorista.cnh_numero }}</strong>, com vencimento em <strong>{{ motorista.cnh_validade|date:"d/m/Y" }}</strong>, categoria <strong>{{ motorista.cnh_categoria }}</strong>, doravante denominado(a) <strong>“<strong>SERVIDOR</strong>
+”</strong>, têm entre si o que segue:
+</p>
+
+<h2>I – Do Objeto</h2>
+<p>
+Cláusula Primeira. O presente Termo tem como objetivo regular o uso do veículo marca <strong>{{ veiculo.marca }}/{{ veiculo.modelo }}</strong>, <strong>{{ veiculo.ano }}/{{ veiculo.ano_modelo }}</strong>, placa <strong>{{ veiculo.placa }}</strong>, que o <strong>SERVIDOR</strong>
+ acima qualificado recebe da <strong>PREFEITURA</strong> em perfeito estado de funcionamento, conforme termo de vistoria, para o exercício de suas funções.
+</p>
+
+<h2>II – Das formas de utilização</h2>
+<p>Cláusula Segunda – A utilização do veículo acima se destina única e exclusivamente para fins de exercício das atividades inerentes à função.</p>
+<p>Cláusula Terceira – São expressamente vedadas:</p>
+<ol>
+    <li>A utilização do veículo por terceiros;</li>
+    <li>A utilização do veículo para fins particulares;</li>
+    <li>A concessão de carona;</li>
+</ol>
+
+<p>Cláusula Quarta – Os encargos e despesas com abastecimento, manutenção, licenciamento, seguro e pedágio ficam a encargo da <strong>PREFEITURA</strong>
+.</p>
+
+<p>Cláusula Quinta – O <strong>SERVIDOR</strong> se compromete a conferência diária da quilometragem, bem como do estado de conservação do veículo, concordando desde já em prestar contas sobre possíveis danos, avarias e consumo excessivo, se a <strong>PREFEITURA</strong> julgar necessário.</p>
+
+<p>Cláusula Sexta – O <strong>SERVIDOR</strong> declara ter recebido, nesta data, o veículo supracitado, comprometendo-se a:</p>
+<ol>
+    <li>Zelar pela conservação do veículo;</li>
+    <li>Comunicar diretamente à <strong>PREFEITURA</strong> a necessidade de manutenção ou conserto do veículo, não podendo esse procedimento (conserto ou manutenção) ser feito sem prévio consentimento ou por pessoa não autorizada pela <strong>PREFEITURA</strong>, excetuando-se aquelas de pequena monta, imprescindíveis à continuidade de viagens.</li>
+    <li>Prestar contas ou devolver o veículo por solicitação da <strong>PREFEITURA</strong>, por mera liberalidade ou para troca do mesmo;</li>
+    <li>Comunicar imediatamente ao CAD qualquer ocorrência relacionada ao veículo, tais como, danos, avarias e roubo ou furto.</li>
+    <li>Pagar as multas decorrentes de infrações de trânsito de sua responsabilidade;</li>
+    <li>Abastecer o veículo em postos com bandeira, considerando o combustível preferencial (gasolina ou diesel) segundo orientação da <strong>PREFEITURA</strong> para cada usuário;</li>
+    <li>Não utilizar o veículo para fins particulares sem liberação formal, inclusive no período de férias;</li>
+    <li>Devolver o veículo imediatamente em caso de rescisão de contrato.</li>
+</ol>
+
+<p><strong>Parágrafo Único:</strong> Em caso de danos ou avarias no veículo, decorrentes de negligência ou má utilização do mesmo, bem como o recebimento de multas por infração de trânsito ou ainda pelo não cumprimento das determinações acima, o <strong>SERVIDOR</strong> arcará com os custos necessários. Em caso de acidente, o funcionário responderá, civil e criminalmente, pelos danos eventualmente causados a terceiros, ressalvada a hipótese de culpa exclusiva de terceiro.</p>
+
+<h2>III – Do Abastecimento</h2>
+<ol>
+    <li>O veículo possui cartão de abastecimento vinculado à placa, tornando-o intransferível.</li>
+    <li>Um novo abastecimento só poderá ser realizado após 24h.</li>
+    <li>Qualquer problema no abastecimento deve ser informado ao CAD.</li>
+    <li>O condutor deve acompanhar o saldo disponível através do comprovante emitido.</li>
+</ol>
+
+<h2>IV – Das Disposições Gerais</h2>
+<p>Cláusula Sétima – As cláusulas e/ou condições ora pactuadas poderão ser revistas, suprimidas e/ou revogadas no todo ou em parte a critério da <strong>PREFEITURA</strong>, mediante comunicação ao <strong>SERVIDOR</strong>.</p>
+<p>Cláusula Oitava – Nenhuma indenização será devida pela <strong>PREFEITURA</strong>, durante a vigência do presente termo, ou em caso de revogação, suspensão ou extinção do mesmo.</p>
+
+<h2>V – Da Vigência</h2>
+<p>O presente Termo terá início a partir da data de sua assinatura e vigorará por prazo indeterminado, enquanto durar o vínculo empregatício, podendo ser revogado a qualquer tempo.</p>
+
+<p><strong>Parágrafo Único:</strong> Dar-se-á como automaticamente extinto o presente Adendo, na ocorrência das seguintes hipóteses: mudança de função cuja utilização do veículo deixe de ser necessária; determinação ou liberalidade da empresa; e extinção, cessação ou rescisão do contrato de trabalho.</p>
+
+<p>E por estarem de pleno acordo com todas as cláusulas e condições ora pactuadas, assinam o presente instrumento em duas vias de igual teor, sendo uma delas entregue ao <strong>SERVIDOR</strong>.</p>
+
+<p>Lauro de Freitas, Bahia, {{ data_hoje }}</p>
+
+<div class="assinatura">
+   <figure style="text-align: center;">
+    <img src="{{ assinatura }}" alt="Assinatura do Motorista" style="transform: rotate(90deg); width: 150px; height: auto;">
+    <figcaption>{{ motorista.nome }}  / <strong>SERVIDOR</strong> <br> CPF: {{ motorista.cpf }} </figcaption>
+</figure>
+    
+</div>
+
+</body>
+</html>

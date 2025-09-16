@@ -1,0 +1,164 @@
+{% extends "controle/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Card centralizado para o formulário -->
+    <div class="card shadow-sm rounded mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">{{ titulo }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Nome -->
+                <div class="mb-3">
+                    <label for="id_nome" class="form-label fw-semibold">Nome</label>
+                    {{ form.nome|add_class:"form-control" }}
+                    {% if form.nome.errors %}
+                        <div class="text-danger mt-1">{{ form.nome.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- CPF -->
+                <div class="mb-3">
+                    <label for="id_cpf" class="form-label fw-semibold">CPF</label>
+                    <input type="text" 
+                           name="cpf" 
+                           id="id_cpf" 
+                           class="form-control" 
+                           placeholder="123.456.789-10"
+                           pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                           title="Digite o CPF no formato 123.456.789-10"
+                           required
+                           value="{{ form.cpf.value|default_if_none:'' }}">
+                    {% if form.cpf.errors %}
+                        <div class="text-danger mt-1">{{ form.cpf.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- RG -->
+                <div class="mb-3">
+                    <label for="id_rg" class="form-label fw-semibold">RG</label>
+                    {{ form.rg|add_class:"form-control" }}
+                    {% if form.rg.errors %}
+                        <div class="text-danger mt-1">{{ form.rg.errors }}</div>
+                    {% endif %}
+                </div>
+                <!-- Telefone -->
+                <div class="mb-3">
+                    <label for="id_telefone" class="form-label fw-semibold">Telefone</label>
+                    <input type="text" 
+                        name="telefone" 
+                        id="id_telefone" 
+                        class="form-control" 
+                        placeholder="(71) 9 9999-9999"
+                        pattern="\(\d{2}\)\s9\s\d{4}-\d{4}"
+                        title="Digite o Telefone no formato (71) 91234-5678"
+                        required
+                        value="{{ form.telefone.value|default_if_none:'' }}">
+                    {% if form.telefone.errors %}
+                        <div class="text-danger mt-1">{{ form.telefone.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Data de Nascimento -->
+<div class="mb-3">
+    <label for="id_data_nacimento" class="form-label fw-semibold">Data de Nascimento</label>
+    <input type="date" 
+           name="data_nacimento" 
+           id="id_data_nacimento" 
+           class="form-control"
+           required
+           value="{% if form.data_nacimento.value %}{{ form.data_nacimento.value|date:'Y-m-d' }}{% endif %}">
+    {% if form.data_nacimento.errors %}
+        <div class="text-danger mt-1">{{ form.data_nacimento.errors }}</div>
+    {% endif %}
+</div>
+<!-- Status Atual -->
+<div class="mb-3">
+    <label for="id_status_atual" class="form-label fw-semibold">Status</label>
+    {{ form.status_atual|add_class:"form-select" }}
+    {% if form.status_atual.errors %}
+        <div class="text-danger mt-1">{{ form.status_atual.errors }}</div>
+    {% endif %}
+</div>
+
+                <!-- CNH Número -->
+                <div class="mb-3">
+                    <label for="id_cnh_numero" class="form-label fw-semibold">CNH Número</label>
+                    {{ form.cnh_numero|add_class:"form-control" }}
+                    {% if form.cnh_numero.errors %}
+                        <div class="text-danger mt-1">{{ form.cnh_numero.errors }}</div>
+                    {% endif %}
+                </div>
+
+<!-- CNH Validade -->
+<div class="mb-3">
+    <label for="id_cnh_validade" class="form-label fw-semibold">Validade da CNH</label>
+    <input type="date" 
+           name="cnh_validade" 
+           id="id_cnh_validade" 
+           class="form-control"
+           required
+           value="{% if form.cnh_validade.value %}{{ form.cnh_validade.value|date:'Y-m-d' }}{% endif %}">
+    {% if form.cnh_validade.errors %}
+        <div class="text-danger mt-1">{{ form.cnh_validade.errors }}</div>
+    {% endif %}
+</div>
+
+                <!-- CNH Categoria -->
+                <div class="mb-3">
+                    <label for="id_cnh_categoria" class="form-label fw-semibold">Categoria da CNH</label>
+                    {{ form.cnh_categoria|add_class:"form-select" }}
+                    {% if form.cnh_categoria.errors %}
+                        <div class="text-danger mt-1">{{ form.cnh_categoria.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- CNH Arquivo -->
+                <div class="mb-3">
+                    <label for="id_cnh_arquivo" class="form-label fw-semibold">Upload da CNH</label>
+                    {{ form.cnh_arquivo|add_class:"form-control" }}
+                    {% if form.instance.cnh_arquivo %}
+                        <small class="text-muted">Arquivo atual: <a href="{{ form.instance.cnh_arquivo.url }}" target="_blank">ver</a></small>
+                    {% endif %}
+                    {% if form.cnh_arquivo.errors %}
+                        <div class="text-danger mt-1">{{ form.cnh_arquivo.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Botões -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'lista_motorista' %}" class="btn btn-secondary rounded-pill px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Máscara para CPF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#id_cpf').inputmask('999.999.999-99'); // máscara CPF
+        $('#id_telefone').inputmask('(99) 9 9999-9999');
+    });
+</script>
+
+<!-- CSS adicional opcional -->
+<style>
+    .card {
+        transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "controle/base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- CARD: Dados Básicos -->
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-light fw-bold" style="color: green;">Dados Básicos</div>
+            <div class="card-body row g-3">
+                <div class="col-md-4">
+                    {{ form.placa.label_tag }} 
+                    {{ form.placa }}
+                    {% for error in form.placa.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-4">
+                    {{ form.renavam.label_tag }}
+                    {{ form.renavam }}
+                    {% for error in form.renavam.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-4">
+                    {{ form.chassi.label_tag }}
+                    {{ form.chassi }}
+                    {% for error in form.chassi.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {{ form.marca.label_tag }}
+                    {{ form.marca }}
+                    {% for error in form.marca.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {{ form.modelo.label_tag }}
+                    {{ form.modelo }}
+                    {% for error in form.modelo.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-3">
+                    {{ form.ano.label_tag }}
+                    {{ form.ano }}
+                    {% for error in form.ano.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-3">
+                    {{ form.ano_modelo.label_tag }}
+                    {{ form.ano_modelo }}
+                    {% for error in form.ano_modelo.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                <div class="col-md-3">
+                    {{ form.tipo_frota.label_tag }}
+                    {{ form.tipo_frota }}
+                </div>
+                <div class="col-md-3">
+                    {{ form.cor.label_tag }}
+                    {{ form.cor }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.tipo_modelo.label_tag }}
+                    {{ form.tipo_modelo }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.tipo_combustivel.label_tag }}
+                    {{ form.tipo_combustivel }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.status_atual.label_tag }}
+                    {{ form.status_atual }}
+                </div>
+            </div>
+        </div>
+        <!-- Mostrar created_by apenas para admin -->
+<!-- Mostrar e permitir edição de created_by apenas para admin -->
+        {% if request.user.is_superuser %}
+        <div class="col-md-4">
+            {{ form.created_by.label_tag }}
+            {{ form.created_by }}
+            {% for error in form.created_by.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            <hr>
+        </div>
+        {% else %}
+        <!-- Usuários comuns não veem o campo -->
+        <input type="hidden" name="created_by" value="{{ form.instance.created_by.id }}">
+        <hr>
+        {% endif %}
+        
+
+        <!-- CARD: Documentos -->
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-light fw-bold" style="color: green;">Documentos</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    {{ form.crlv.label_tag }}
+                    {{ form.crlv }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.seguro.label_tag }}
+                    {{ form.seguro }}
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD: Motoristas e Setor -->
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-light fw-bold" style="color: green;">Motoristas e Setor</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    {{ form.motoristas.label_tag }}
+                    {{ form.motoristas }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.setor.label_tag }}
+                    {{ form.setor }}
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{% url 'listar_veiculo' %}" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "controle/base.html" %}
+
+{% block title %}Detalhes do Veículo - {{ veiculo.placa }}{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header bg-dark text-white" style="text-align: center;">
+    {{ veiculo.placa }} • {{ veiculo.marca }} {{ veiculo.modelo }}
+  </div>
+  <div class="card-body">
+    <div class="row text-sm">
+      <div class="col-md-4 mb-2">
+        <strong>RENAVAM:</strong> {{ veiculo.renavam }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Chassi:</strong> {{ veiculo.chassi }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Setor:</strong> {{ veiculo.setor.nome }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Ano:</strong> {{ veiculo.ano }}/{{ veiculo.ano_modelo }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Cor:</strong> {{ veiculo.get_cor_display }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Modelo:</strong> {{ veiculo.get_tipo_modelo_display }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Frota:</strong> {{ veiculo.get_tipo_frota_display }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Combustível:</strong> {{ veiculo.get_tipo_combustivel_display }}
+      </div>
+      <div class="col-md-4 mb-2">
+        <strong>Status:</strong>
+        {% if veiculo.status_atual == "AT" %}
+          <span class="badge bg-success">Ativo</span>
+        {% elif veiculo.status_atual == "MA" %}
+          <span class="badge bg-warning text-dark">Manutenção</span>
+        {% elif veiculo.status_atual == "IN" %}
+          <span class="badge bg-secondary">Inativo</span>
+        {% elif veiculo.status_atual == "VE" %}
+          <span class="badge bg-danger">Vendido</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+      <!-- CARD: Documentos -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light fw-bold" style="color: black">📄 Documentos</div>
+  <div class="card-body d-flex flex-column gap-2">
+    <div>
+      <strong>CRLV:</strong>
+      {% if veiculo.crlv %}
+        <a href="{{ veiculo.crlv.url }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">Ver CRLV</a>
+      {% else %}
+        <span class="text-muted ms-2">Não anexado</span>
+      {% endif %}
+    </div>
+    <div>
+      <strong>Seguro:</strong>
+      {% if veiculo.seguro %}
+        <a href="{{ veiculo.seguro.url }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">Ver Seguro</a>
+      {% else %}
+        <span class="text-muted ms-2">Não anexado</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- CARD: Motoristas Vinculados -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light fw-bold" style="color: black;">👤 Motoristas Vinculados</div>
+  <div class="card-body">
+    {% if motoristas %}
+      <div class="d-flex flex-wrap gap-2">
+        {% for m in motoristas %}
+          <span class="badge bg-secondary">
+            {{ m.nome }} - <a href="{% url 'listar_termos' m.pk %}", style="color: black;">Termos</a>
+          </span>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">Nenhum motorista vinculado a este veículo.</p>
+    {% endif %}
+  </div>
+</div>
+
+<hr>
+<h5>Últimos Abastecimentos</h5>
+
+{% if abastecimentos %}
+  <div class="row g-2">
+    {% for a in abastecimentos %}
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-2">
+            <p class="mb-1">
+              <strong>Data:</strong> {{ a.data }}<br>
+              <strong>Hora:</strong> {{ a.hora }}
+            </p>
+            <p class="mb-1">
+              <strong>Status:</strong>
+              {% if a.status == "OK" %}
+                <span class="badge bg-success">OK</span>
+              {% elif a.status == "BLOQUEADA" %}
+                <span class="badge bg-danger">BLOQUEADA</span>
+                {% if a.ParametroBloqueio %}
+                  <br><small class="text-danger">Motivo: {{ a.ParametroBloqueio }}</small>
+                {% endif %}
+              {% else %}
+                <span class="badge bg-secondary">{{ a.status }}</span>
+              {% endif %}
+            </p>
+            <p class="mb-1">
+              <strong>Km:</strong> {{ a.kmAnterior }} → {{ a.kmAtual }}
+            </p>
+            <p class="mb-1">
+              <strong>Combustível:</strong> {{ a.combustivel }}
+            </p>
+            <p class="mb-1">
+              <strong>Litros:</strong> {{ a.quantidadeLitros }}<br>
+              <strong>Valor:</strong> R$ {{ a.valor }}
+            </p>
+            <p class="mb-0">
+              <strong>Posto:</strong> {{ a.posto }}
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">Nenhum abastecimento encontrado nos últimos 30 dias.</p>
+{% endif %}
+
+
+
+
+    <div class="card-footer text-end">
+      <a href="{% url 'listar_veiculo' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+

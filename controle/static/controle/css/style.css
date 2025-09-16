@@ -1,0 +1,83 @@
+:root {
+    --gestor-green: #41814f;     /* Verde principal */
+    --gestor-green-light: #d4f4e4; /* Verde claro para hover */
+    --gestor-dark: #333333;      /* Cinza escuro para textos */
+    --gestor-gray: #f5f5f5;      /* Fundo suave */
+    --gestor-border: #cccccc;    /* Bordas sutis */
+}
+
+/* Corpo */
+body {
+    background-color: var(--gestor-gray);
+    color: var(--gestor-dark);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--gestor-green);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* sombra suave e elegante */
+    border-bottom: 4px solid #dfdfdf; /* linha escura */
+}
+
+.navbar-brand,
+.nav-link {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--gestor-green-light) !important;
+}
+
+
+/* Botões */
+.btn-gestor {
+    background-color: var(--gestor-green);
+    color: #fff;
+    border: none;
+}
+
+.btn-gestor:hover {
+    background-color: #246b45;
+    color: #fff;
+}
+
+/* Cards */
+.card {
+    border: 1px solid var(--gestor-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    background-color: var(--gestor-green);
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Tabelas */
+.table thead {
+    background-color: var(--gestor-green);
+    color: #fff;
+}
+
+.table tbody tr:hover {
+    background-color: var(--gestor-green-light);
+}
+
+/* Links */
+a {
+    color: var(--gestor-green);
+    text-decoration: none;
+}
+
+a:hover {
+    color: #1f5e3c;
+    text-decoration: underline;
+}
+
+/* Formulários */
+.form-control:focus {
+    border-color: var(--gestor-green);
+    box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+}

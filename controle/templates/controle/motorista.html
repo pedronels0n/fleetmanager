@@ -1,0 +1,91 @@
+{% extends "controle/base.html" %} 
+
+{% block title %}Lista de Motoristas{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <div class="mb-2 mb-md-0">
+        <h2 class="fw-bold mb-1">Painel de Condutores</h2>
+        <small class="text-muted">Gerencie os motoristas cadastrados no sistema</small>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center">
+        <!-- Formulário de pesquisa -->
+        <form method="get" class="me-2 d-flex mb-2 mb-md-0">
+            <input type="text" name="q" class="form-control form-control-sm me-1" placeholder="Pesquisar motorista..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3">Pesquisar</button>
+        </form>
+
+        <!-- Botões de ordenação -->
+        <div class="btn-group me-2 mb-2 mb-md-0">
+            <a href="?ordenar=a-z{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">A-Z</a>
+            <a href="?ordenar=z-a{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Z-A</a>
+        </div>
+
+        <!-- Botão Adicionar -->
+        <a href="{% url 'criar_motorista' %}" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm mb-2 mb-md-0">
+            + Adicionar
+        </a>
+    </div>
+</div>
+<div class="row g-3">
+    {% for m in motoristas %}
+    <div class="col-12 col-md-3"> <!-- 12 col = 1 card por linha, md-6 = 2 cards por linha em telas médias/grandes -->
+        <div class="list-group-item d-flex justify-content-between align-items-center p-3 shadow-sm rounded" style="transition: transform 0.15s ease-in-out; background-color: white;">
+            <div>
+                <h6 class="mb-1 fw-semibold">{{ m.nome }}
+                </h6> 
+                <small class="text-muted">
+                    CPF: {{ m.cpf }}<br>CNH: {{ m.cnh_numero }}
+                </small>
+            </div>
+<div class="d-flex flex-column gap-2">
+    <a href="{% url 'listar_termos' m.pk %}" class="btn btn-outline-primary btn-sm rounded-pill">Termos</a>
+    <a href="{% url 'editar_motorista' m.pk %}" class="btn btn-outline-warning btn-sm rounded-pill">Editar</a>
+
+    {% if request.user.is_superuser %}
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#modalExcluir{{ m.pk }}">
+            Excluir
+        </button>
+    {% endif %}
+</div>
+            
+            
+        </div>
+
+        <!-- Modal de exclusão -->
+        <div class="modal fade" id="modalExcluir{{ m.pk }}" tabindex="-1" aria-labelledby="modalExcluirLabel{{ m.pk }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content rounded shadow-sm">
+              <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="modalExcluirLabel{{ m.pk }}">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+              </div>
+              <div class="modal-body">
+                Tem certeza que deseja excluir o motorista <strong>{{ m.nome }}</strong>?
+              </div>
+              <div class="modal-footer">
+                <form method="post" action="{% url 'excluir_motorista' m.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger rounded-pill px-4">Excluir</button>
+                </form>
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">Nenhum motorista cadastrado.</p>
+    {% endfor %}
+</div>
+
+<!-- Hover suave nos cards -->
+<style>
+.list-group-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+</style>
+
+{% endblock %}

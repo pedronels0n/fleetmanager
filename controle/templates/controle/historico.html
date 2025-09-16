@@ -1,0 +1,42 @@
+{% extends "controle/base.html" %}
+{% block title %}Histórico GFrota{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Histórico Geral do GFrota</h2>
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Usuário</th>
+        <th>Model</th>
+        <th>Objeto</th>
+        <th>Ação</th>
+        <th>Alterações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr class="{{ log.classe }}">
+        <td>{{ log.data|date:"d/m/Y H:i" }}</td>
+        <td>{{ log.usuario }}</td>
+        <td>{{ log.model }}</td>
+        <td>{{ log.objeto }}</td>
+        <td>{{ log.acao }}</td>
+        <td>
+          {% if log.mudancas %}
+            <ul>
+              {% for m in log.mudancas %}
+              <li>{{ m }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            ---
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

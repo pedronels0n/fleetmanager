@@ -1,0 +1,151 @@
+{% extends "controle/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Assinatura do Motorista{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h2 class="mb-4 text-center">Assinatura do Motorista</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-warning">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="card shadow p-4" id="form-assinatura">
+        {% csrf_token %}
+
+        <!-- Seleção de Veículo via Modal -->
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Veículo</label>
+                <input type="text" id="veiculo_display" class="form-control" placeholder="Escolha um veículo" readonly>
+                <input type="hidden" id="id_veiculo" name="veiculo">
+                <button type="button" class="btn btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#veiculoModal">
+                    Selecionar Veículo
+                </button>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Motorista</label>
+                {{ form.motorista|add_class:"form-select" }}
+            </div>
+        </div>
+
+        <!-- Botão para abrir modal de assinatura -->
+        <div class="mb-4 text-center">
+            <button type="button" class="btn btn-outline-success btn-lg" data-bs-toggle="modal" data-bs-target="#assinaturaModal">
+                Fazer Assinatura
+            </button>
+        </div>
+
+        <!-- Hidden para enviar assinatura -->
+        <input type="hidden" id="id_assinatura_imagem" name="assinatura_imagem">
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Salvar Termo</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal de Veículos -->
+<div class="modal fade" id="veiculoModal" tabindex="-1" aria-labelledby="veiculoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="veiculoModalLabel">Selecione um Veículo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="veiculoSearch" class="form-control mb-3" placeholder="Buscar veículo...">
+        <ul class="list-group" id="veiculoList">
+          {% for v in form.veiculo.field.queryset %}
+            <li class="list-group-item list-group-item-action veiculo-item" 
+                data-id="{{ v.id }}" 
+                data-display="{{ v.placa }} - {{ v.marca }} {{ v.modelo }}">
+              {{ v.placa }} - {{ v.marca }} {{ v.modelo }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Fullscreen da Assinatura -->
+<div class="modal fade" id="assinaturaModal" tabindex="-1" aria-labelledby="assinaturaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assinaturaModalLabel">Assine aqui</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body p-0">
+        <canvas id="canvasModal" class="w-100 h-100"></canvas>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="clearModal" class="btn btn-warning">Limpar</button>
+        <button type="button" id="saveModal" class="btn btn-success">Salvar Assinatura</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.0/dist/signature_pad.umd.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // --- Modal de Veículos ---
+    const veiculoItems = document.querySelectorAll(".veiculo-item");
+    const veiculoDisplay = document.getElementById("veiculo_display");
+    const veiculoHidden = document.getElementById("id_veiculo");
+    veiculoItems.forEach(item => {
+        item.addEventListener("click", function () {
+            veiculoDisplay.value = this.dataset.display;
+            veiculoHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("veiculoModal"));
+            modal.hide();
+        });
+    });
+
+    // --- Modal Fullscreen de Assinatura ---
+    const canvas = document.getElementById("canvasModal");
+    const assinaturaModalEl = document.getElementById("assinaturaModal");
+    const hiddenInput = document.getElementById("id_assinatura_imagem");
+    let signaturePad;
+
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
+        if(signaturePad) signaturePad.clear(); // limpa assinatura ao redimensionar
+    }
+
+    assinaturaModalEl.addEventListener("shown.bs.modal", function() {
+        resizeCanvas();
+        signaturePad = new SignaturePad(canvas, { backgroundColor: "rgba(0,0,0,0)", penColor: "rgb(0,0,0)" });
+    });
+
+    window.addEventListener("resize", function() {
+        if(signaturePad) resizeCanvas();
+    });
+
+    document.getElementById("clearModal").addEventListener("click", function() {
+        if(signaturePad) signaturePad.clear();
+        hiddenInput.value = "";
+    });
+
+    document.getElementById("saveModal").addEventListener("click", function() {
+        if(signaturePad.isEmpty()) {
+            alert("Por favor, assine antes de salvar.");
+            return;
+        }
+        hiddenInput.value = signaturePad.toDataURL("image/png");
+        bootstrap.Modal.getInstance(assinaturaModalEl).hide();
+    });
+});
+</script>
+{% endblock %}
