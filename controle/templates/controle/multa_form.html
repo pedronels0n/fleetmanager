@@ -1,0 +1,324 @@
+{% extends "controle/base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+<!-- CARD UNIFICADO: Dados da Multa -->
+<div class="card mb-3 shadow-sm">
+  <div class="card-header bg-light fw-bold text-success">
+    Dados da Multa
+  </div>
+  <div class="card-body">
+
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+
+      <!-- Veículo -->
+      <div class="col">
+        <label class="form-label fw-bold">Veículo</label>
+        <div class="input-group">
+          <input type="text" id="veiculo_display" class="form-control" placeholder="Escolha um veículo" readonly>
+          <input type="hidden" id="id_veiculo" name="veiculo">
+          <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#veiculoModal">
+            Selecionar
+          </button>
+        </div>
+      </div>
+
+      <!-- Motorista -->
+      <div class="col">
+        <label class="form-label fw-bold">Motorista (opcional)</label>
+        <div class="input-group">
+          <input type="text" id="motorista_display" class="form-control" placeholder="Escolha um motorista" readonly>
+          <input type="hidden" id="id_motorista" name="motorista">
+          <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#motoristaModal">
+            Selecionar
+          </button>
+        </div>
+      </div>
+
+      <!-- Infração -->
+      <div class="col-12">
+        <label class="form-label fw-bold">Infração</label>
+        <div class="input-group">
+          <input type="text" id="infracao_display" class="form-control" placeholder="Escolha uma infração" readonly>
+          <input type="hidden" id="id_infracao" name="infracao">
+          <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#infracaoModal">
+            Selecionar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- CARD 2: Dados Administrativos -->
+<div class="card mb-3 shadow-sm">
+  <div class="card-header bg-light fw-bold text-primary">
+    Dados Administrativos
+  </div>
+  <div class="card-body">
+
+    <!-- Número do Memorando -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Número Memorando:</label>
+      <div class="col-sm-9">
+        {{ form.numero_memorando }}
+      </div>
+    </div>
+
+    <!-- Auto de Infração -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Auto de Infração:</label>
+      <div class="col-sm-9">
+        {{ form.auto_infracao }}
+      </div>
+    </div>
+
+    <!-- Setor -->
+    <div class="row mb-2">
+        <label class="col-sm-3 col-form-label fw-bold">Setor:</label>
+        <div class="col-sm-9 d-flex align-items-center">
+            <span class="form-control-plaintext">{{ form.setor.as_hidden }}</span>
+        </div>
+    </div>
+
+    <!-- Data e Hora da Infração -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Data/Hora Infração:</label>
+      <div class="col-sm-9">
+        {{ form.data_hora_infracao }}
+      </div>
+    </div>
+
+    <!-- Local -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Local:</label>
+      <div class="col-sm-9">
+        {{ form.local }}
+      </div>
+    </div>
+
+    <!-- Órgão Autuador -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Órgão Autuador:</label>
+      <div class="col-sm-9">
+        {{ form.orgao_autuador }}
+      </div>
+    </div>
+
+    <!-- Prazo Pagamento -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Prazo Pagamento:</label>
+      <div class="col-sm-9">
+        {{ form.prazo_pagamento }}
+      </div>
+    </div>
+
+    <!-- Conta Pagamento -->
+    <div class="row mb-2">
+      <label class="col-sm-3 col-form-label fw-bold">Conta Pagamento:</label>
+      <div class="col-sm-9">
+        {{ form.conta_pagamento }}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+        <!-- CARD: Status -->
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-light fw-bold" style="color: green;">Status</div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    {{ form.status_multa.label_tag }}
+                    {{ form.status_multa }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.status_pagamento.label_tag }}
+                    {{ form.status_pagamento }}
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD: Documentos Digitalizados -->
+        <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-light fw-bold" style="color: green;">Documentos Digitalizados / PDF </div>
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    {{ form.documento_recebido.label_tag }}
+                    {{ form.documento_recebido }}
+                    {% if form.documento_recebido.help_text %}
+                        <small class="form-text text-muted">{{ form.documento_recebido.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {{ form.comprovante_pagamento.label_tag }}
+                    {{ form.comprovante_pagamento }}
+                    {% if form.comprovante_pagamento.help_text %}
+                        <small class="form-text text-muted">{{ form.comprovante_pagamento.help_text }}</small>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {{ form.notificacao_infracao.label_tag }}
+                    {{ form.notificacao_infracao }}
+                    {% if form.notificacao_infracao.help_text %}
+                        <small class="form-text text-muted">{{ form.notificacao_infracao.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{%url 'listar_multas' %}" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal de Veículos -->
+<div class="modal fade" id="veiculoModal" tabindex="-1" aria-labelledby="veiculoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="veiculoModalLabel">Selecione um Veículo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="veiculoSearch" class="form-control mb-3" placeholder="Buscar veículo...">
+        <ul class="list-group" id="veiculoList">
+          {% for v in form.veiculo.field.queryset %}
+            <li class="list-group-item list-group-item-action veiculo-item" 
+                data-id="{{ v.id }}" 
+                data-display="{{ v.placa }} - {{ v.marca }} {{ v.modelo }}">
+              {{ v.placa }} - {{ v.marca }} {{ v.modelo }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de Motoristas -->
+<div class="modal fade" id="motoristaModal" tabindex="-1" aria-labelledby="motoristaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="motoristaModalLabel">Selecione um Motorista</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="motoristaSearch" class="form-control mb-3" placeholder="Buscar motorista...">
+        <ul class="list-group" id="motoristaList">
+          {% for m in form.motorista.field.queryset %}
+            <li class="list-group-item list-group-item-action motorista-item" 
+                data-id="{{ m.id }}" 
+                data-display="{{ m.nome }}">
+              {{ m.nome }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Infrações -->
+<div class="modal fade" id="infracaoModal" tabindex="-1" aria-labelledby="infracaoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infracaoModalLabel">Selecione uma Infração</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="infracaoSearch" class="form-control mb-3" placeholder="Buscar infração...">
+        <ul class="list-group" id="infracaoList">
+          {% for i in form.infracao.field.queryset %}
+            <li class="list-group-item list-group-item-action infracao-item" 
+                data-id="{{ i.id }}" 
+                data-display="{{ i.descricao }}">
+              {{ i.descricao }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Função de busca para os três modais (Veículo, Motorista e Infração)
+    function setupSearch(searchInputId, listId, itemClass) {
+        const searchInput = document.getElementById(searchInputId);
+        const listItems = document.querySelectorAll(`#${listId} .${itemClass}`);
+        
+        searchInput.addEventListener("input", function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            listItems.forEach(item => {
+                const itemText = item.dataset.display.toLowerCase(); // Certifique-se de que dataset.display tenha o nome correto
+                if(itemText.includes(searchTerm)) {
+                    item.style.display = "";  // Exibe o item
+                } else {
+                    item.style.display = "none";  // Esconde o item
+                }
+            });
+        });
+    }
+
+    // Configuração de busca para cada modal
+    setupSearch("veiculoSearch", "veiculoList", "veiculo-item");
+    setupSearch("motoristaSearch", "motoristaList", "motorista-item");
+    setupSearch("infracaoSearch", "infracaoList", "infracao-item");
+
+    // --- Modal de Veículos ---
+    const veiculoItems = document.querySelectorAll(".veiculo-item");
+    const veiculoDisplay = document.getElementById("veiculo_display");
+    const veiculoHidden = document.getElementById("id_veiculo");
+    veiculoItems.forEach(item => {
+        item.addEventListener("click", function () {
+            veiculoDisplay.value = this.dataset.display;
+            veiculoHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("veiculoModal"));
+            modal.hide();
+        });
+    });
+
+    // --- Modal de Motoristas ---
+    const motoristaItems = document.querySelectorAll(".motorista-item");
+    const motoristaDisplay = document.getElementById("motorista_display");
+    const motoristaHidden = document.getElementById("id_motorista");
+    motoristaItems.forEach(item => {
+        item.addEventListener("click", function () {
+            motoristaDisplay.value = this.dataset.display;
+            motoristaHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("motoristaModal"));
+            modal.hide();
+        });
+    });
+
+    // --- Modal de Infrações ---
+    const infracaoItems = document.querySelectorAll(".infracao-item");
+    const infracaoDisplay = document.getElementById("infracao_display");
+    const infracaoHidden = document.getElementById("id_infracao");
+    infracaoItems.forEach(item => {
+        item.addEventListener("click", function () {
+            infracaoDisplay.value = this.dataset.display;
+            infracaoHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("infracaoModal"));
+            modal.hide();
+        });
+    });
+});
+</script>
+{% endblock %}

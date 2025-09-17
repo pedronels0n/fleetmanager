@@ -12,6 +12,7 @@ admin.site.register(Setor)
 admin.site.register(ManutencaoVeiculo)
 admin.site.register(Multa)
 admin.site.register(TermoResponsabilidade)
+admin.site.register(ContaPagamento)
 
 # Recurso de importação
 class VeiculoResource(resources.ModelResource):
@@ -71,3 +72,18 @@ class MotoristaAdmin(ImportExportModelAdmin):
     ordering = ('nome',)
 
 admin.site.register(Motorista, MotoristaAdmin)
+
+
+class InfracaoTransitoResource(resources.ModelResource):
+    class Meta:
+        model = InfracaoTransito
+        fields = ('descricao', 'gravidade', 'valor')
+        import_id_fields = ('descricao',)  # opcional: usa descricao como referência ao atualizar
+
+class InfracaoTransitoAdmin(ImportExportModelAdmin):
+    resource_class = InfracaoTransitoResource
+    list_display = ('descricao', 'gravidade', 'valor')
+    search_fields = ('descricao',)
+    list_filter = ('gravidade',)
+
+admin.site.register(InfracaoTransito, InfracaoTransitoAdmin)

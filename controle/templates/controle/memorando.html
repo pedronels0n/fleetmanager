@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Memorando de Multa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            text-align: justify; /* texto justificado */
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .logo {
+            width: 100px;
+        }
+
+        .header-text {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        h4 {
+
+        }
+
+        ul, ol {
+            margin-left: 1cm;  /* itens à esquerda */
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 1px;
+        }
+
+        .campo-dado {
+            font-weight: bold;
+            text-align: left;  /* mantém a informação alinhada à esquerda */
+        }
+
+        .assinatura {
+            margin-top: 5px;
+            text-align: center;
+        }
+        .campo-data {
+            text-align: right;  /* mantém a informação alinhada à esquerda */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://www.laurodefreitas.ba.gov.br/site/LogoLauro_Horizontal1.jpg" alt="Logo da PREFEITURA" class="logo">
+    <div class="header-text">
+        <strong>PREFEITURA MUNICIPAL DE LAURO DE FREITAS – BA<br>
+        SECRETARIA MUNICIPAL DE ADMINISTRAÇÃO - SECAD</strong>
+    </div>
+</header>
+
+<p><strong>MEMORANDO Nº <span class="campo-dado">{{ multa.numero_memorando }}</span>/2025 – CONTRATOS – SECAD</strong></p>
+<p class="campo-data">Lauro de Freitas, Bahia, <span class="campo-dado">{{ multa.data_registro|date:"d/m/Y" }}</span></p>
+
+
+<p>De: Secretaria Municipal de Administração – SECAD<br>
+Para: <span class="campo-dado">{{ multa.setor }}</span><br>
+Assunto: Notificação / Infração de Trânsito – Veículo Oficial</p>
+
+<p>
+    Senhor(a), <br>
+Cumprimentando-o cordialmente, solicito a adoção das providências cabíveis quanto à multa por infração de trânsito cometida por veículo à disposição desta Secretaria. Nos termos do Código de Trânsito Brasileiro (Lei nº 9.503/1997), a responsabilidade pelas infrações recai sobre o condutor no momento da ocorrência, independentemente do exercício de função pública. Ressaltamos que o desempenho de atribuições institucionais não exime o servidor de arcar com as penalidades pecuniárias decorrentes da infração, salvo em caso de deferimento de eventual recurso junto ao órgão autuador. Diante disso, solicitamos a identificação do condutor responsável, para fins de regularização da autuação junto ao órgão competente.
+</p>
+
+<h4>1. Dados da Infração</h4>
+<ul>
+    <li>Auto de Infração: <span class="campo-dado">{{ multa.auto_infracao }}</span></li>
+    <li>Placa: <span class="campo-dado">{{ multa.veiculo.placa }}</span></li>
+    <li>Marca / Modelo: <span class="campo-dado">{{ multa.veiculo.marca }}/{{ multa.veiculo.modelo }}</span></li>
+    <li>Data/Hora da Ocorrência: <span class="campo-dado">{{ multa.data_hora_infracao|date:"d/m/Y H:i" }}</span></li>
+    <li>Local da Infração: <span class="campo-dado">{{ multa.local }}</span></li>
+    <li>Órgão Autuador: <span class="campo-dado">{{ multa.orgao_autuador }}</span></li>
+    <li>Valor da Multa: <span class="campo-dado">R$ {{ multa.valor }}</span></li>
+    <li>Data Final para Pagamento Integral: <span class="campo-dado">{{ multa.prazo_pagamento|date:"d/m/Y" }}</span></li>
+</ul>
+
+<h4>2. Procedimentos Recomendados</h4>
+<p>Solicita-se à unidade responsável:</p>
+<ol>
+    <li>A imediata identificação do condutor responsável pela infração;</li>
+    <li>A adoção das providências administrativas para quitação da penalidade ou, se for o caso, interposição de recurso junto ao órgão competente, no prazo legal;</li>
+    <li>O envio do comprovante de pagamento à SECAD, impreterivelmente, até 30 (trinta) dias a contar do recebimento deste memorando;</li>
+    <li>Em caso de interposição de recurso, encaminhar cópia do protocolo e manter esta Secretaria informada quanto à tramitação.</li>
+</ol>
+
+<h4>3. Informações Bancárias para Depósito</h4>
+<p>Efetuar pagamento por depósito identificado/transferência, conforme dados abaixo:</p>
+<ul>
+    <li>Banco: <span class="campo-dado">{{ multa.conta_pagamento.banco }}</span></li>
+    <li>Agência: <span class="campo-dado">{{ multa.conta_pagamento.agencia }}</span></li>
+    <li>Conta Corrente: <span class="campo-dado">{{ multa.conta_pagamento.conta_corrente }}</span></li>
+    <li>Favorecido: <span class="campo-dado">{{ multa.conta_pagamento.favorecido }}</span></li>
+    <li>CNPJ: <span class="campo-dado">{{ multa.conta_pagamento.cnpj }}</span></li>
+</ul>
+<p>Atenciosamente,</p>
+<div class="assinatura">
+    <strong>Luane Xavier Braz dos Reis</strong><br>
+    Diretora de Departamento<br>
+</div>
+
+</body>
+</html>

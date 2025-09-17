@@ -58,7 +58,10 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
       <div class="modal-body">
+        <!-- Campo de Busca -->
         <input type="text" id="veiculoSearch" class="form-control mb-3" placeholder="Buscar veículo...">
+
+        <!-- Lista de Veículos -->
         <ul class="list-group" id="veiculoList">
           {% for v in form.veiculo.field.queryset %}
             <li class="list-group-item list-group-item-action veiculo-item" 
@@ -145,6 +148,71 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         hiddenInput.value = signaturePad.toDataURL("image/png");
         bootstrap.Modal.getInstance(assinaturaModalEl).hide();
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Função de busca para os três modais (Veículo, Motorista e Infração)
+    function setupSearch(searchInputId, listId, itemClass) {
+        const searchInput = document.getElementById(searchInputId);
+        const listItems = document.querySelectorAll(`#${listId} .${itemClass}`);
+        
+        searchInput.addEventListener("input", function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            listItems.forEach(item => {
+                const itemText = item.dataset.display.toLowerCase(); // Certifique-se de que dataset.display tenha o nome correto
+                if(itemText.includes(searchTerm)) {
+                    item.style.display = "";  // Exibe o item
+                } else {
+                    item.style.display = "none";  // Esconde o item
+                }
+            });
+        });
+    }
+
+    // Configuração de busca para cada modal
+    setupSearch("veiculoSearch", "veiculoList", "veiculo-item");
+    setupSearch("motoristaSearch", "motoristaList", "motorista-item");
+    setupSearch("infracaoSearch", "infracaoList", "infracao-item");
+
+    // --- Modal de Veículos ---
+    const veiculoItems = document.querySelectorAll(".veiculo-item");
+    const veiculoDisplay = document.getElementById("veiculo_display");
+    const veiculoHidden = document.getElementById("id_veiculo");
+    veiculoItems.forEach(item => {
+        item.addEventListener("click", function () {
+            veiculoDisplay.value = this.dataset.display;
+            veiculoHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("veiculoModal"));
+            modal.hide();
+        });
+    });
+
+    // --- Modal de Motoristas ---
+    const motoristaItems = document.querySelectorAll(".motorista-item");
+    const motoristaDisplay = document.getElementById("motorista_display");
+    const motoristaHidden = document.getElementById("id_motorista");
+    motoristaItems.forEach(item => {
+        item.addEventListener("click", function () {
+            motoristaDisplay.value = this.dataset.display;
+            motoristaHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("motoristaModal"));
+            modal.hide();
+        });
+    });
+
+    // --- Modal de Infrações ---
+    const infracaoItems = document.querySelectorAll(".infracao-item");
+    const infracaoDisplay = document.getElementById("infracao_display");
+    const infracaoHidden = document.getElementById("id_infracao");
+    infracaoItems.forEach(item => {
+        item.addEventListener("click", function () {
+            infracaoDisplay.value = this.dataset.display;
+            infracaoHidden.value = this.dataset.id;
+            const modal = bootstrap.Modal.getInstance(document.getElementById("infracaoModal"));
+            modal.hide();
+        });
     });
 });
 </script>

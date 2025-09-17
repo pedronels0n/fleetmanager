@@ -1,0 +1,38 @@
+{% extends "controle/base.html" %}
+{% load static %}
+
+{% block title %}Atualizar Status da Multa{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="mb-3">Atualizar Status - Multa {{ multa.numero_memorando }}</h3>
+
+    <form method="post" enctype="multipart/form-data" class="card p-3 shadow-sm">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{ form.status_multa.id_for_label }}" class="form-label">Status da Multa</label>
+            {{ form.status_multa }}
+            {% if form.status_multa.errors %}
+                <div class="text-danger small">{{ form.status_multa.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.documento_recebido.id_for_label }}" class="form-label">Documento Recebido</label>
+            {{ form.documento_recebido }}
+            {% if multa.documento_recebido %}
+                <p class="mt-2">
+                    📄 <a href="{{ multa.documento_recebido.url }}" target="_blank">Ver documento atual</a>
+                </p>
+            {% endif %}
+            {% if form.documento_recebido.errors %}
+                <div class="text-danger small">{{ form.documento_recebido.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="{% url 'listar_multas' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

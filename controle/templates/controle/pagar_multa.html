@@ -1,0 +1,38 @@
+{% extends "controle/base.html" %}
+{% load static %}
+
+{% block title %}Pagamento da Multa{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h3 class="mb-3">Pagamento - Multa {{ multa.numero_memorando }}</h3>
+
+    <form method="post" enctype="multipart/form-data" class="card p-3 shadow-sm">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{ form.status_pagamento.id_for_label }}" class="form-label">Status do Pagamento</label>
+            {{ form.status_pagamento }}
+            {% if form.status_pagamento.errors %}
+                <div class="text-danger small">{{ form.status_pagamento.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.comprovante_pagamento.id_for_label }}" class="form-label">Comprovante de Pagamento</label>
+            {{ form.comprovante_pagamento }}
+            {% if multa.comprovante_pagamento %}
+                <p class="mt-2">
+                    📄 <a href="{{ multa.comprovante_pagamento.url }}" target="_blank">Ver comprovante atual</a>
+                </p>
+            {% endif %}
+            {% if form.comprovante_pagamento.errors %}
+                <div class="text-danger small">{{ form.comprovante_pagamento.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-success">Confirmar Pagamento</button>
+        <a href="{% url 'listar_multas' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

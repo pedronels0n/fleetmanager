@@ -1,0 +1,130 @@
+{% extends "controle/base.html" %}
+{% block title %}Lista de Multas{% endblock %}
+
+{% block content %}
+<style>
+    .card-compact {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #fff;
+        transition: transform 0.2s, box-shadow 0.3s;
+        font-size: 0.85rem;
+        position: relative;
+    }
+    .card-compact:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    }
+    .card-compact .header {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 6px;
+    }
+    .card-compact .field {
+        margin-bottom: 4px;
+    }
+    .status {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        color: #fff;
+        font-weight: 500;
+        margin-left: 4px;
+        margin-bottom: 2px;
+    }
+    .status-enviado { background-color: #f0ad4e; }   
+    .status-recebido { background-color: #5cb85c; }  
+    .status-pendente { background-color: #d9534f; }  
+    .status-pago { background-color: #5cb85c; }      
+    .status-multa {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 0.75rem;
+    }
+    .card-footer {
+        text-align: right;
+        margin-top: 6px;
+    }
+    a {
+    text-decoration: none;  /* remove o sublinhado normal */
+    color: black
+    }
+
+    a:hover {
+    text-decoration: none;  /* remove o sublinhado no hover */
+    }
+</style>
+
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="mb-0">Multas</h2>
+        <a href="{% url 'criar_multa' %}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
+            <span class="fw-semibold">+ Nova Multa </span>
+            <i class="bi bi-plus-lg"></i>
+        </a>
+    </div>
+
+    <div class="row g-2">
+        {% for multa in multas %}
+        <a href="{% url 'detalhar_multa' multa.id %}"><div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card-compact">
+                <div class="status-multa text-center">
+    <span class="status status-{{ multa.status_multa|lower }}">
+        {{ multa.status_multa }}
+    </span>
+    </div>
+                <div class="header">
+                    {{ multa.veiculo.marca }} {{ multa.veiculo.modelo }} ({{ multa.veiculo.placa }}) - {{ multa.numero_memorando}}
+                </div>
+                <div class="field">
+                    <strong>Setor:</strong> {{ multa.setor }}
+                </div>
+                <div class="field">
+                    <strong>Cadastro:</strong> {{ multa.data_registro|date:"d/m/Y" }} 
+                    &nbsp;|&nbsp; <strong>Valor:</strong> R$ {{ multa.valor }}
+                </div>
+                <div class="field">
+                    <strong>Auto de Infração:</strong> {{ multa.auto_infracao }} 
+                </div>
+                <div class="field">
+                    <strong>Prazo:</strong> {{ multa.prazo_pagamento|date:"d/m/Y" }}
+                </div>
+                <div class="field">
+                    <strong>Pagamento:</strong>
+                    <span class="status status-{{ multa.status_pagamento|lower }}">
+                        {{ multa.status_pagamento }}
+                    </span>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+        <div>
+            <!-- Receber -->
+            <a href="{% url 'editar_multa' multa.id %}" class="btn btn-sm btn-outline-primary me-1">  Receber </a>
+
+            <!-- Pagar (verde) -->
+            <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-sm btn-outline-success me-1">
+                <i class="bi bi-cash-coin"></i> Pagar
+            </a>
+
+            <!-- Excluir (lixeirinha) -->
+            <a href="#" class="btn btn-sm btn-outline-danger" 
+            onclick="return confirm('Tem certeza que deseja excluir esta multa?');">
+                <i class="bi bi-trash"></i>
+            </a>
+        </div>
+    <a href="{% url 'criar_memorando' multa.id %}" class="btn btn-sm btn-outline-secondary" target="_blank">
+        Memorando
+    </a>
+</a></div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p>Nenhuma multa cadastrada.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

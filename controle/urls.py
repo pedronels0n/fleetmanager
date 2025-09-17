@@ -19,16 +19,24 @@ urlpatterns = [
     path("veiculo/criar", views.criar_veiculo, name='criar_veiculo'),  # criar novo veículo
     path("veiculo/<int:pk>/editar", views.editar_veiculo, name='editar_veiculo'),  # editar veículo existente
     path('veiculo/<int:pk>/excluir', views.excluir_veiculo, name='excluir_veiculo'),
-    #Links para LOGIN/LOGOUT
+    #LINKS PARA ---- LOGIN/LOGOUT
     path("login/", auth_views.LoginView.as_view(template_name="controle/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
+    #LINKS PARA ---- LOGS
     path('logs/', views.logs_todos, name='logs_todos'),
+    #LINKS PARA ---- ABASTECIMENTOS
     path('abastecimentos/', views.lista_abastecimentos, name='abastecimentos' ),
     path('abastecimento/detalhe/<int:cod_abastecimento>/', views.acessar_abastecimento, name='detalhe_abastecimento'),
+    #LINKS PARA CRUD ---- USUARIOS
     path('usuarios/', views.lista_usuarios, name='lista_usuarios'),
     path('usuarios/novo/', views.criar_usuario, name='criar_usuario'),
     path('usuarios/<int:pk>/editar/', views.editar_usuario, name='editar_usuario'),
     path('usuarios/<int:pk>/excluir/', views.deletar_usuario, name='excluir_usuario'),
-
-
+    #LINKS PARA CRUD - MULTAS
+    path('multas/criar/', views.criar_multa, name='criar_multa'),
+    path('multas/<int:multa_id>/memorando/', views.criar_memorando, name='criar_memorando'),
+    path('multas/listar/', views.listar_multas, name='listar_multas'),
+    path('multa/<int:pk>/editar/', views.atualizar_status_multa, name='editar_multa'),
+    path('multas/<int:pk>/pagar/', views.pagar_multa, name='pagar_multa'),
+    path('multas/<int:pk>/detalhar/', views.detalhar_multa, name='detalhar_multa'),
 ]

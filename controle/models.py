@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 class Setor(models.Model):
     # Nome do setor/departamento, único para evitar duplicidade
@@ -162,7 +163,7 @@ class Veiculo(models.Model):
                                    null=True,               # permite ficar vazio
                                    blank=True,
                                    on_delete=models.SET_NULL
-)
+    )
 
 
 
@@ -249,70 +250,133 @@ class ManutencaoVeiculo(models.Model):
     def __str__(self):
         return f"{self.veiculo.placa} - {self.tipo_manutencao or 'Manutenção'} em {self.data}"
     
+from django.db import models
+from django.utils import timezone
+
 class Multa(models.Model):
-    # Veículo vinculado à multa
+
+    numero_memorando = models.PositiveIntegerField(blank=True, null=True,)
+
+    auto_infracao = models.CharField(blank=True, null=True)
+
     veiculo = models.ForeignKey(
-        'Veiculo', 
-        on_delete=models.CASCADE,         # Se o veículo for deletado, a multa também será removida
-        related_name='multas'             # Permite acessar todas as multas de um veículo via veiculo.multas.all()
+        'Veiculo',
+        on_delete=models.CASCADE,
+        related_name='multas'
     )
-    
-    # Motorista vinculado à multa (opcional)
+
+    # 🔑 Setor congelado no momento do registro
+    setor = models.CharField(
+        max_length=100,
+        help_text="Setor do veículo no momento da infração",
+        null=True,
+        blank=True,
+    )
+
     motorista = models.ForeignKey(
-        'Motorista', 
-        on_delete=models.SET_NULL,        # Se o motorista for deletado, o campo será definido como NULL
-        null=True,                        # Permite que o campo fique vazio
-        blank=True,                       # Permite que o campo fique vazio em formulários/admin
-        related_name='multas'             # Permite acessar todas as multas de um motorista via motorista.multas.all()
-    )
-    
-    # Dados da infração
-    data_infracao = models.DateField(
-        default=timezone.now,             # Data da infração, padrão é a data atual
-        help_text="Data em que a infração ocorreu"
-    )
-    local = models.CharField(
-        max_length=200, 
-        help_text="Local onde a infração foi registrada"
-    )
-    orgao_autuador = models.CharField(
-        max_length=100, 
-        help_text="Órgão que aplicou a multa"
-    )
-    valor = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        help_text="Valor da multa em reais"
-    )
-    natureza = models.CharField(
-        max_length=100, 
-        help_text="Natureza da infração, ex: Estacionamento irregular, excesso de velocidade"
-    )
-    pontos = models.PositiveIntegerField(
-        default=0, 
-        help_text="Número de pontos na CNH referente à infração"
+        'Motorista',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='multas'
     )
 
-    # Documento da multa (upload de PDF ou imagem)
-    documento = models.FileField(
-        upload_to='documentos/multas/',   # Pasta onde o arquivo será salvo
-        blank=True,                        # Permite que o campo fique vazio
-        null=True                           # Permite que o campo seja nulo no banco
+    infracao = models.ForeignKey(
+    'InfracaoTransito',
+    on_delete=models.PROTECT,
+    related_name='multas',
+    help_text="Tipo de infração cometida",
+    null=True,   # permite nulo
+    blank=True   # permite vazio em formulários
     )
 
-    # Data de registro no sistema
-    data_registro = models.DateTimeField(
-        auto_now_add=True,                 # Preenche automaticamente com a data/hora de criação
-        help_text="Data e hora do registro da multa no sistema"
+    data_hora_infracao = models.DateTimeField(default=timezone.now)
+    local = models.CharField(max_length=200)
+    orgao_autuador = models.CharField(max_length=100)
+    prazo_pagamento = models.DateField(default=timezone.now)
+
+    STATUS_MULTA_CHOICES = [
+        ('enviado', 'Enviado'),
+        ('recebido', 'Recebido'),
+    ]
+    STATUS_PAGAMENTO_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('pago', 'Pago'),
+    ]
+
+    status_multa = models.CharField(
+        max_length=20,
+        choices=STATUS_MULTA_CHOICES,
+        default='enviado'
     )
+    status_pagamento = models.CharField(
+        max_length=20,
+        choices=STATUS_PAGAMENTO_CHOICES,
+        default='pendente'
+    )
+
+    documento_recebido = models.FileField(
+        upload_to='documentos/multas/recebidos/',
+        blank=True,
+        null=True,
+        help_text="Documento com carimbo de recebido"
+    )
+    comprovante_pagamento = models.FileField(
+        upload_to='documentos/multas/comprovantes/',
+        blank=True,
+        null=True,
+        help_text="Comprovante de pagamento"
+    )
+
+    notificacao_infracao = models.FileField(
+        upload_to='documentos/multas/',
+        blank=True,
+        null=True,
+        help_text='Notificao recebida do orgao atuador'
+    )
+    memorando = models.FileField(
+        upload_to='documentos/multas/memorandos/',
+        blank=True,
+        null=True,
+        help_text='Memorando criado por FleetManager'
+    )
+
+    data_registro = models.DateTimeField(auto_now_add=True)
+
+    history = HistoricalRecords()
+
+    conta_pagamento = models.ForeignKey(
+        'ContaPagamento',
+        on_delete=models.PROTECT,
+        related_name='multas',
+        help_text="Conta para pagamento da multa",
+        null=True, blank=True
+    )
+
+    def clean(self):
+        if self.status_multa == 'recebido' and not self.documento_recebido:
+            raise ValidationError("É obrigatório anexar o documento com carimbo de recebido.")
+        if self.status_pagamento == 'pago' and not self.comprovante_pagamento:
+            raise ValidationError("É obrigatório anexar o comprovante de pagamento.")
+        
+
+    def save(self, *args, **kwargs):
+        # Se for uma multa nova e o setor ainda não foi preenchido, copia do veículo
+        if not self.pk and not self.setor:
+            self.setor = str(self.veiculo.setor)
+        self.full_clean()  # garante validações
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        """
-        Representação do objeto como string.
-        Exibe placa do veículo, natureza da infração e data.
-        Útil para visualização no admin e listas.
-        """
-        return f"{self.veiculo.placa} - {self.natureza} em {self.data_infracao}"
+        return f"{self.veiculo.placa} - {self.infracao.descricao}"
+
+    @property
+    def valor(self):
+        return self.infracao.valor
+
+    @property
+    def gravidade(self):
+        return self.infracao.gravidade
 
 class TermoResponsabilidade(models.Model):
     veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE)
@@ -324,3 +388,45 @@ class TermoResponsabilidade(models.Model):
 
     def __str__(self):
         return f"{self.veiculo} - {self.motorista}"
+
+
+class InfracaoTransito(models.Model):
+    descricao = models.CharField(max_length=255)  # Ex: "Avançar sinal vermelho"
+    gravidade = models.CharField(max_length=50, choices=[
+        ('leve', 'Leve'),
+        ('media', 'Média'),
+        ('grave', 'Grave'),
+        ('gravissima', 'Gravíssima'),
+    ])
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.descricao} ({self.gravidade})"
+
+class ContaPagamento(models.Model):
+    banco = models.CharField(
+        max_length=100,
+        help_text="Nome do banco, ex: Banco do Brasil"
+    )
+    agencia = models.CharField(
+        max_length=10,
+        help_text="Número da agência, ex: 0000"
+    )
+    conta_corrente = models.CharField(
+        max_length=20,
+        help_text="Número da conta corrente, ex: 000000-0"
+    )
+    favorecido = models.CharField(
+        max_length=200,
+        default="Prefeitura Municipal de Lauro de Freitas – Secretaria de Administração",
+        help_text="Nome do favorecido"
+    )
+    cnpj = models.CharField(
+        max_length=18,
+        help_text="CNPJ do favorecido, ex: XX.XXX.XXX/0001-XX"
+    )
+
+    def __str__(self):
+        return f"{self.favorecido}"
+
+
