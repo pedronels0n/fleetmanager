@@ -1,7 +1,7 @@
 from django.template import loader
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseForbidden
-from datetime import datetime
+from datetime import datetime, timezone
 from weasyprint import HTML
 from .models import Motorista, Veiculo, TermoResponsabilidade, Setor, Multa
 from django.core.files.base import ContentFile
@@ -14,6 +14,8 @@ from django.db.models import Q  # necessário para filtros complexos
 from .utils import buscar_abastecimentos, buscar_abastecimentos_por_data, buscar_abastecimentos_recentes, acessar_abastecimento_externo
 from django.utils.text import slugify
 from itertools import chain
+from django.contrib.auth.models import User
+
 
 @login_required
 def home(request):
@@ -59,8 +61,6 @@ def criar_termo(request, pk):
         form = TermoResponsabilidadeForm(initial={'motorista': motorista})
 
     return render(request, "controle/assinatura.html", {"form": form, "motorista": motorista})
-
-
 
 @login_required
 def visualizar_termos(request, pk):
@@ -406,6 +406,10 @@ def logs_todos(request):
     return render(request, 'controle/logs_todos.html', {'logs': logs_processados})
 
 
+
+# -------------- ABASTECIMENTO ---------------
+#
+
 def lista_abastecimentos(request):
     data_inicio = request.GET.get("data_inicio")
     data_fim = request.GET.get("data_fim")
@@ -440,11 +444,8 @@ def acessar_abastecimento(request, cod_abastecimento):
 
 
 
-# views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
-from .forms import UserForm
-from django.contrib import messages
+# ----------------- Usuarios -----------------
+####### CRUD --> USUARIOS
 
 def lista_usuarios(request):
     usuarios = User.objects.all()
@@ -510,7 +511,6 @@ def atualizar_status_multa(request, pk):
 
     return render(request, "controle/multa_editar.html", {"form": form, "multa": multa})
 
-
 def criar_memorando(request, multa_id):
     # Busca a multa
     multa = get_object_or_404(Multa, pk=multa_id)
@@ -529,8 +529,29 @@ def criar_memorando(request, multa_id):
     return response
 
 def listar_multas(request):
-    multas = Multa.objects.all().order_by('-data_hora_infracao')  # últimas primeiro
-    return render(request, 'controle/listar_multas.html', {'multas': multas})
+    multas = Multa.objects.all().order_by('-data_hora_infracao')
+
+    status_multa = request.GET.get('status_multa')
+    status_pagamento = request.GET.get('status_pagamento')
+    setor = request.GET.get('setor')
+
+    if status_multa and status_multa != "todos":
+        multas = multas.filter(status_multa=status_multa)
+
+    if status_pagamento and status_pagamento != "todos":
+        multas = multas.filter(status_pagamento=status_pagamento)
+
+    if setor and setor != "todos":
+        multas = multas.filter(setor=setor)
+
+    context = {
+        'multas': multas,
+        'status_multa_selecionado': status_multa,
+        'status_pagamento_selecionado': status_pagamento,
+        'setor_selecionado': setor,
+        'setores': Multa.objects.values_list('setor', flat=True).distinct(),
+    }
+    return render(request, 'controle/listar_multas.html', context)
 
 
 def pagar_multa(request, pk):
@@ -548,7 +569,6 @@ def pagar_multa(request, pk):
         form = PagamentoMultaForm(instance=multa)
 
     return render(request, "controle/pagar_multa.html", {"form": form, "multa": multa})
-
 
 def detalhar_multa(request, pk):
     multa = get_object_or_404(Multa, pk=pk)
