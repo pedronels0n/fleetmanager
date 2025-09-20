@@ -11,6 +11,14 @@ body {
     background-color: var(--gestor-gray);
     color: var(--gestor-dark);
     font-family: 'Segoe UI', sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1; /* ocupa todo o espaço disponível */
 }
 
 .navbar {

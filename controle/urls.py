@@ -22,6 +22,7 @@ urlpatterns = [
     #LINKS PARA ---- LOGIN/LOGOUT
     path("login/", auth_views.LoginView.as_view(template_name="controle/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
+    path('acesso-negado/', views.acesso_negado, name='acesso_negado'),
     #LINKS PARA ---- LOGS
     path('logs/', views.logs_todos, name='logs_todos'),
     #LINKS PARA ---- ABASTECIMENTOS

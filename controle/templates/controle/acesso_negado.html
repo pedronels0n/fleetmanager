@@ -1,0 +1,32 @@
+{% extends "controle/base.html" %}
+{% load static %}
+
+{% block title %}Acesso Negado{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card shadow p-4" style="max-width: 560px; width: 100%; border-radius: 12px;">
+
+    <!-- Cabeçalho com imagem + título lado a lado -->
+    <div class="d-flex align-items-center mb-3 justify-content-center gap-3">
+  <img src="{% static 'controle/img/pitbull_triste.png' %}" 
+       alt="Pitbull sem permissão" 
+       style="width: 80px; height: auto;">
+  <h2 class="fw-bold text-danger m-0 display-6">🚫Acesso Negado</21>
+</div>
+
+    <p class="text-center mb-3">
+      O <strong>pitbull</strong> tentou, mas não tem 
+      <span class="text-warning fw-semibold">permissão suficiente</span> para entrar aqui. 🐾
+    </p>
+
+    <a href="{% url 'login' %}" class="btn btn-outline-dark w-100">
+      🔑 Entrar com outra conta (talvez a certa)
+    </a>
+
+    <div class="text-center mt-3">
+      <small class="text-muted">GestorFleet da © SegenCode — onde até os pitbulls fazem check-in</small>
+    </div>
+  </div>
+</div>
+{% endblock %}

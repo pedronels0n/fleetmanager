@@ -124,3 +124,8 @@ def acessar_abastecimento_externo(cod_abastecimento):
 
     
     return PAGINA_PROTEGIDA
+
+
+def grupo_administrador(user):
+    return user.groups.filter(name='Administrador').exists()
+

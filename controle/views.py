@@ -9,12 +9,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 import base64
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q  # necessário para filtros complexos
-from .utils import buscar_abastecimentos, buscar_abastecimentos_por_data, buscar_abastecimentos_recentes, acessar_abastecimento_externo
+from .utils import buscar_abastecimentos, buscar_abastecimentos_por_data, buscar_abastecimentos_recentes, acessar_abastecimento_externo, grupo_administrador
 from django.utils.text import slugify
 from itertools import chain
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User 
 
 
 @login_required
@@ -195,7 +195,7 @@ def editar_motorista(request, pk):
     )
 
 # EXCLUIR
-@login_required
+@user_passes_test(grupo_administrador)
 def excluir_motorista(request, pk):
     motorista = get_object_or_404(Motorista, pk=pk)
     if request.method == "POST":
@@ -348,7 +348,7 @@ def excluir_veiculo(request, pk):
 
 # ------------ VISUALIZAR LOGS --------------
 
-@login_required
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def logs_todos(request):
     logs_motorista = Motorista.history.all()
     logs_veiculo = Veiculo.history.all()
@@ -409,7 +409,7 @@ def logs_todos(request):
 
 # -------------- ABASTECIMENTO ---------------
 #
-
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def lista_abastecimentos(request):
     data_inicio = request.GET.get("data_inicio")
     data_fim = request.GET.get("data_fim")
@@ -430,7 +430,7 @@ def lista_abastecimentos(request):
         "data_fim": data_fim or "",
     })
 
-
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def acessar_abastecimento(request, cod_abastecimento):
 
     # Chama a função do utils.py que faz login e retorna o HTML da página externa
@@ -446,11 +446,12 @@ def acessar_abastecimento(request, cod_abastecimento):
 
 # ----------------- Usuarios -----------------
 ####### CRUD --> USUARIOS
-
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def lista_usuarios(request):
     usuarios = User.objects.all()
     return render(request, "controle/listar_usuarios.html", {"usuarios": usuarios})
 
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def criar_usuario(request):
     if request.method == "POST":
         form = UserForm(request.POST)
@@ -462,6 +463,7 @@ def criar_usuario(request):
         form = UserForm()
     return render(request, "controle/usuarios_form.html", {"form": form, "titulo": "Criar Usuário"})
 
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def editar_usuario(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == "POST":
@@ -474,6 +476,7 @@ def editar_usuario(request, pk):
         form = UserForm(instance=user)
     return render(request, "controle/usuarios_form.html", {"form": form, "titulo": "Editar Usuário"})
 
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def deletar_usuario(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == "POST":
@@ -482,9 +485,11 @@ def deletar_usuario(request, pk):
         return redirect("lista_usuarios")
     return render(request, "usuarios/confirm_delete.html", {"usuario": user})
 
+def acesso_negado(request):
+    return render(request, 'controle/acesso_negado.html', status=403)
 
 #-------------- MULTAS -------------
-
+@login_required
 def criar_multa(request):
     if request.method == 'POST':
         form = MultaForm(request.POST, request.FILES)
@@ -495,6 +500,7 @@ def criar_multa(request):
         form = MultaForm()
     return render(request, 'controle/multa_form.html', {'form': form})
 
+@login_required
 def atualizar_status_multa(request, pk):
     multa = get_object_or_404(Multa, pk=pk)
 
@@ -511,6 +517,7 @@ def atualizar_status_multa(request, pk):
 
     return render(request, "controle/multa_editar.html", {"form": form, "multa": multa})
 
+@login_required
 def criar_memorando(request, multa_id):
     # Busca a multa
     multa = get_object_or_404(Multa, pk=multa_id)
@@ -528,6 +535,7 @@ def criar_memorando(request, multa_id):
     response['Content-Disposition'] = f'inline; filename=memorando_{multa.id}.pdf'
     return response
 
+@login_required
 def listar_multas(request):
     multas = Multa.objects.all().order_by('-data_hora_infracao')
 
@@ -553,7 +561,7 @@ def listar_multas(request):
     }
     return render(request, 'controle/listar_multas.html', context)
 
-
+@login_required
 def pagar_multa(request, pk):
     multa = get_object_or_404(Multa, pk=pk)
 
@@ -570,6 +578,7 @@ def pagar_multa(request, pk):
 
     return render(request, "controle/pagar_multa.html", {"form": form, "multa": multa})
 
+@login_required
 def detalhar_multa(request, pk):
     multa = get_object_or_404(Multa, pk=pk)
     return render(request, "controle/detalhar_multa.html", {"multa": multa})

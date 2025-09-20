@@ -55,9 +55,11 @@
     a:hover {
         text-decoration: none;
     }
+    
 </style>
 
 <div class="container py-3">
+    <!-- Cabeçalho e Botão Nova Multa -->
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="mb-0">Multas</h2>
         <a href="{% url 'criar_multa' %}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
@@ -66,98 +68,101 @@
         </a>
     </div>
 
-    <!-- 🔍 FILTROS -->
-<form method="get" class="row g-2 mb-3">
-    <div class="col-md-3">
-        <select name="status_multa" class="form-select form-select-sm">
-            <option value="todos">Status da Multa (Todos)</option>
-            <option value="enviado" {% if status_multa_selecionado == "enviado" %}selected{% endif %}>Enviado</option>
-            <option value="recebido" {% if status_multa_selecionado == "recebido" %}selected{% endif %}>Recebido</option>
-        </select>
-    </div>
+    <!-- Filtros -->
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <select name="status_multa" class="form-select form-select-sm">
+                <option value="todos">Status da Multa (Todos)</option>
+                <option value="enviado" {% if status_multa_selecionado == "enviado" %}selected{% endif %}>Enviado</option>
+                <option value="recebido" {% if status_multa_selecionado == "recebido" %}selected{% endif %}>Recebido</option>
+            </select>
+        </div>
 
-    <div class="col-md-3">
-        <select name="status_pagamento" class="form-select form-select-sm">
-            <option value="todos">Status Pagamento (Todos)</option>
-            <option value="pendente" {% if status_pagamento_selecionado == "pendente" %}selected{% endif %}>Pendente</option>
-            <option value="pago" {% if status_pagamento_selecionado == "pago" %}selected{% endif %}>Pago</option>
-        </select>
-    </div>
+        <div class="col-md-3">
+            <select name="status_pagamento" class="form-select form-select-sm">
+                <option value="todos">Status Pagamento (Todos)</option>
+                <option value="pendente" {% if status_pagamento_selecionado == "pendente" %}selected{% endif %}>Pendente</option>
+                <option value="pago" {% if status_pagamento_selecionado == "pago" %}selected{% endif %}>Pago</option>
+            </select>
+        </div>
 
-    <div class="col-md-3">
-        <select name="setor" class="form-select form-select-sm">
-            <option value="todos">Setor (Todos)</option>
-            {% for s in setores %}
-            <option value="{{ s }}" {% if setor_selecionado == s %}selected{% endif %}>{{ s }}</option>
-            {% endfor %}
-        </select>
-    </div>
+        <div class="col-md-3">
+            <select name="setor" class="form-select form-select-sm">
+                <option value="todos">Setor (Todos)</option>
+                {% for s in setores %}
+                    <option value="{{ s }}" {% if setor_selecionado == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <div class="col-md-3 d-flex gap-2">
-        <button type="submit" class="btn btn-sm btn-outline-dark w-100">Filtrar</button>
-        <a href="{% url 'listar_multas' %}" class="btn btn-sm btn-outline-secondary w-100">Limpar</a>
-    </div>
-</form>
-    <!-- LISTA DE MULTAS -->
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-outline-dark w-100">Filtrar</button>
+            <a href="{% url 'listar_multas' %}" class="btn btn-sm btn-outline-secondary w-100">Limpar</a>
+        </div>
+    </form>
+
+    <!-- Lista de Multas -->
     <div class="row g-2">
         {% for multa in multas %}
-        <a href="{% url 'detalhar_multa' multa.id %}">
-            <div class="col-sm-6 col-md-4 col-lg-3">
-                <div class="card-compact">
-                    <div class="status-multa text-center">
-                        <span class="status status-{{ multa.status_multa|lower }}">
-                            {{ multa.status_multa }}
-                        </span>
-                    </div>
-                    <div class="header">
-                        {{ multa.veiculo.marca }} {{ multa.veiculo.modelo }} ({{ multa.veiculo.placa }}) - {{ multa.numero_memorando}}
-                    </div>
-                    <div class="field">
-                        <strong>Setor:</strong> {{ multa.setor }}
-                    </div>
-                    <div class="field">
-                        <strong>Cadastro:</strong> {{ multa.data_registro|date:"d/m/Y" }} 
-                        &nbsp;|&nbsp; <strong>Valor:</strong> R$ {{ multa.valor }}
-                    </div>
-                    <div class="field">
-                        <strong>Auto de Infração:</strong> {{ multa.auto_infracao }} 
-                    </div>
-                    <div class="field">
-                        <strong>Prazo:</strong> {{ multa.prazo_pagamento|date:"d/m/Y" }}
-                    </div>
-                    <div class="field">
-                        <strong>Pagamento:</strong>
-                        <span class="status status-{{ multa.status_pagamento|lower }}">
-                            {{ multa.status_pagamento }}
-                        </span>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <div>
-                            <!-- Receber -->
-                            <a href="{% url 'editar_multa' multa.id %}" class="btn btn-sm btn-outline-primary me-1">Receber</a>
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <a href="{% url 'detalhar_multa' multa.id %}" class="text-decoration-none text-dark">
+                    <div class="card-compact">
+                        <!-- Status da Multa -->
+                        <div class="status-multa text-center">
+                            <span class="status status-{{ multa.status_multa|lower }}">
+                                {{ multa.status_multa }}
+                            </span>
+                        </div>
+                        
+                        <!-- Detalhes do Veículo e Memorando -->
+                        <div class="header">
+                            {{ multa.veiculo.marca }} {{ multa.veiculo.modelo }} ({{ multa.veiculo.placa }}) - {{ multa.numero_memorando }}
+                        </div>
 
-                            <!-- Pagar (verde) -->
-                            <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-sm btn-outline-success me-1">
-                                <i class="bi bi-cash-coin"></i> Pagar
-                            </a>
+                        <!-- Detalhes da Multa -->
+                        <div class="field">
+                            <strong>Setor:</strong> {{ multa.setor }}
+                        </div>
+                        <div class="field">
+                            <strong>Cadastro:</strong> {{ multa.data_registro|date:"d/m/Y" }} 
+                            &nbsp;|&nbsp; <strong>Valor:</strong> R$ {{ multa.valor }}
+                        </div>
+                        <div class="field">
+                            <strong>Auto de Infração:</strong> {{ multa.auto_infracao }} 
+                        </div>
+                        <div class="field">
+                            <strong>Prazo:</strong> {{ multa.prazo_pagamento|date:"d/m/Y" }}
+                        </div>
+                        <div class="field">
+                            <strong>Pagamento:</strong>
+                            <span class="status status-{{ multa.status_pagamento|lower }}">
+                                {{ multa.status_pagamento }}
+                            </span>
+                        </div>
 
-                            <!-- Excluir (lixeirinha) -->
-                            <a href="#" class="btn btn-sm btn-outline-danger" 
-                               onclick="return confirm('Tem certeza que deseja excluir esta multa?');">
-                                <i class="bi bi-trash"></i>
+                        <!-- Ações -->
+                        <div class="card-footer d-flex justify-content-between">
+                            <div>
+                                <!-- Botões de Ação -->
+                                <a href="{% url 'editar_multa' multa.id %}" class="btn btn-sm btn-outline-primary me-1">Receber</a>
+                                <a href="{% url 'pagar_multa' multa.id %}" class="btn btn-sm btn-outline-success me-1">
+                                    <i class="bi bi-cash-coin"></i> Pagar
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta multa?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                            <a href="{% url 'criar_memorando' multa.id %}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                Memorando
                             </a>
                         </div>
-                        <a href="{% url 'criar_memorando' multa.id %}" class="btn btn-sm btn-outline-secondary" target="_blank">
-                            Memorando
-                        </a>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
         {% empty %}
-        <div class="col-12 text-center">
-            <p>Nenhuma multa cadastrada.</p>
-        </div>
+            <div class="col-12 text-center">
+                <p>Nenhuma multa cadastrada.</p>
+            </div>
         {% endfor %}
     </div>
 </div>

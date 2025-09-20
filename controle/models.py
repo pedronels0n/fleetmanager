@@ -368,7 +368,7 @@ class Multa(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.veiculo.placa} - {self.infracao.descricao}"
+        return f"{self.veiculo.placa} - {self.setor}"
 
     @property
     def valor(self):
