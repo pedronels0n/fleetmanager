@@ -272,6 +272,7 @@ class Multa(models.Model):
         null=True,
         blank=True,
     )
+    setor_descricao = models.CharField(max_length=255, blank=True)
 
     motorista = models.ForeignKey(
         'Motorista',
@@ -364,6 +365,7 @@ class Multa(models.Model):
         # Se for uma multa nova e o setor ainda não foi preenchido, copia do veículo
         if not self.pk and not self.setor:
             self.setor = str(self.veiculo.setor)
+            self.setor_descricao = str(self.veiculo.setor.descricao)
         self.full_clean()  # garante validações
         super().save(*args, **kwargs)
 

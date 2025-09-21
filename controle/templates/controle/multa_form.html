@@ -82,7 +82,16 @@
     <div class="row mb-2">
         <label class="col-sm-3 col-form-label fw-bold">Setor:</label>
         <div class="col-sm-9 d-flex align-items-center">
-            <span class="form-control-plaintext">{{ form.setor.as_hidden }}</span>
+            <span class="form-control-plaintext">{{ form.instance.setor }}</span>
+            {{ form.setor.as_hidden }}
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <label class="col-sm-3 col-form-label fw-bold">Descrição do Setor:</label>
+        <div class="col-sm-9 d-flex align-items-center">
+            <span class="form-control-plaintext">{{ form.instance.setor_descricao }}</span>
+            {{ form.setor_descricao.as_hidden }}
         </div>
     </div>
 

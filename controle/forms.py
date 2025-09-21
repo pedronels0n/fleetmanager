@@ -77,6 +77,7 @@ class MultaForm(forms.ModelForm):
             'auto_infracao',
             'veiculo',
             'setor',
+            'setor_descricao',
             'motorista',
             'infracao',
             'data_hora_infracao',
