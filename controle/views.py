@@ -584,12 +584,27 @@ def detalhar_multa(request, pk):
     multa = get_object_or_404(Multa, pk=pk)
     return render(request, "controle/detalhar_multa.html", {"multa": multa})
 
+def trocar_setor(request, pk):
+    multa = get_object_or_404(Multa, id=pk)
+    setores = Setor.objects.all()  # 🔁 lista de setores com nome e descrição
 
+    if request.method == 'POST':
+        form = TrocaSetorForm(request.POST, instance=multa)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_multas')
+    else:
+        form = TrocaSetorForm(instance=multa)
+
+    return render(request, 'controle/setor_multa.html', {
+        'form': form,
+        'multa': multa,
+        'setores': setores  # 🔁 envia para o JS preencher a descrição
+    })
 # Relatorios
 
 
 
-from django.http import HttpResponse
 from openpyxl import Workbook
 from openpyxl.styles import Font
 from openpyxl.worksheet.hyperlink import Hyperlink

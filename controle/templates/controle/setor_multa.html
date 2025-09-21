@@ -1,0 +1,154 @@
+{% extends "controle/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Trocar Setor da Multa{% endblock %}
+
+{% block content %}
+<style>
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-control,
+  .form-select {
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.25);
+  }
+
+  .btn-primary-modern {
+    background-color: #6c63ff;
+    color: white;
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    font-weight: 500;
+    transition: 0.2s ease;
+  }
+
+  .btn-primary-modern:hover {
+    background-color: #5848e5;
+  }
+
+  .btn-outline-cancel {
+    border: 1px solid #ccc;
+    color: #333;
+    border-radius: 10px;
+    padding: 0.6rem 1.5rem;
+    transition: 0.2s ease;
+  }
+
+  .btn-outline-cancel:hover {
+    background-color: #f8f9fa;
+  }
+
+  .card-header-minimal {
+    background-color: transparent;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  h4.title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  label.form-label {
+    font-weight: 500;
+    color: #555;
+  }
+
+  .text-muted-small {
+    font-size: 0.85rem;
+    color: #999;
+  }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="glass-card p-4">
+                <div class="card-header-minimal mb-3">
+                    <h4 class="title">
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                        Trocar Setor - <span class="text-muted">Multa #{{ multa.numero_memorando }}</span>
+                    </h4>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <!-- Campo Setor -->
+                    <div class="mb-4">
+                        <label for="{{ form.setor.id_for_label }}" class="form-label">
+                            <i class="bi bi-building me-1"></i> Novo Setor
+                        </label>
+                        {{ form.setor|add_class:"form-select" }}
+                        {% if form.setor.errors %}
+                            <div class="text-danger text-muted-small mt-1">{{ form.setor.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Campo Descrição -->
+                    <div class="mb-4">
+                        <label for="{{ form.setor_descricao.id_for_label }}" class="form-label">
+                            <i class="bi bi-card-text me-1"></i> Descrição do Setor
+                        </label>
+                        {{ form.setor_descricao|add_class:"form-control" }}
+                        {% if form.setor_descricao.errors %}
+                            <div class="text-danger text-muted-small mt-1">{{ form.setor_descricao.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{% url 'listar_multas' %}" class="btn btn-outline-cancel">
+                            <i class="bi bi-x-circle me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary-modern">
+                            <i class="bi bi-arrow-left-right me-1"></i> Trocar Setor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para preencher descrição automaticamente -->
+<script>
+  const descricoes = {
+    {% for setor in setores %}
+      "{{ setor.nome }}": "{{ setor.descricao|escapejs }}",
+    {% endfor %}
+  };
+
+  const setorSelect = document.getElementById("id_setor");
+  const descricaoInput = document.getElementById("id_setor_descricao");
+
+  if (setorSelect && descricaoInput) {
+    setorSelect.addEventListener("change", function () {
+      const setor = setorSelect.value;
+      descricaoInput.value = descricoes[setor] || "";
+    });
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const setor = setorSelect.value;
+      descricaoInput.value = descricoes[setor] || "";
+    });
+  }
+</script>
+{% endblock %}

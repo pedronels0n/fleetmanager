@@ -43,4 +43,5 @@ urlpatterns = [
     #LINKS PARA RELATORIOS
     path('exportar-multas-excel/', views.exportar_multas_excel, name='exportar_multas_excel'),
     path('relatorios/', views.listar_relatorios, name='listar_relatorios'),
+    path('multas/<int:pk>/trocar-setor/', views.trocar_setor, name='trocar_setor'),
 ]

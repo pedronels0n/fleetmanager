@@ -1,5 +1,5 @@
 from django import forms
-from .models import Motorista, TermoResponsabilidade, Veiculo, Multa
+from .models import Motorista, TermoResponsabilidade, Veiculo, Multa, Setor
 from django.contrib.auth.models import User, Group
 
 class VeiculoForm(forms.ModelForm):
@@ -68,6 +68,28 @@ class UserForm(forms.ModelForm):
             user.groups.set(self.cleaned_data['grupos'])
         return user
 
+
+class TrocaSetorForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        setores = Setor.objects.all()
+        self.setor_map = {s.nome: s.descricao for s in setores}
+        self.fields['setor'] = forms.ChoiceField(
+            choices=[(s.nome, s.nome) for s in setores],
+            label='Setor',
+            required=True
+        )
+        self.fields['setor_descricao'].widget.attrs['readonly'] = True
+
+    class Meta:
+        model = Multa
+        fields = ['setor', 'setor_descricao']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        setor_nome = cleaned_data.get('setor')
+        cleaned_data['setor_descricao'] = self.setor_map.get(setor_nome, '')
+        return cleaned_data
 
 class MultaForm(forms.ModelForm):
     class Meta:
