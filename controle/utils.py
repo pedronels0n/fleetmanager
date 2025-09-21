@@ -1,7 +1,9 @@
 import requests
 from datetime import datetime, timedelta
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 API_URL = "https://ws.sisatec.com.br/api/abastecimento/byDataAndStatusAndPlaca"
 API_CODIGO = "11972"
