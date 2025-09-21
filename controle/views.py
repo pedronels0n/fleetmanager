@@ -596,6 +596,7 @@ from openpyxl.worksheet.hyperlink import Hyperlink
 from django.conf import settings
 from .models import Multa
 
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def exportar_multas_excel(request):
     wb = Workbook()
     ws = wb.active
@@ -663,6 +664,6 @@ def exportar_multas_excel(request):
     wb.save(response)
     return response
 
-
+@user_passes_test(grupo_administrador, login_url='acesso_negado')
 def listar_relatorios(request):
     return render(request, 'controle/listar_relatorios.html')   
