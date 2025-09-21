@@ -19,4 +19,5 @@ __pycache__/
 # Virtualenv
 venv/
 env/
+fleetmanager/settings.py
 
