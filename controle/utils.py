@@ -1,9 +1,11 @@
 import requests
 from datetime import datetime, timedelta
+import os
+
 
 API_URL = "https://ws.sisatec.com.br/api/abastecimento/byDataAndStatusAndPlaca"
 API_CODIGO = "11972"
-API_KEY = "BB63614CE75185247F17C7C0FE81FCB0C9FE0E12"
+API_KEY = os.getenv("SISATEC_API_KEY")
 
 def buscar_abastecimentos(placa, dias=30):
     """
