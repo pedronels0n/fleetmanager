@@ -1,0 +1,29 @@
+{% extends 'controle/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Relatórios</h2>
+
+    <div class="row">
+        <!-- Card de Relatório de Multas -->
+        <div class="col-md-4">
+            <div class="card border-primary shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    Relatório de Multas
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Exporte todas as multas cadastradas no sistema em formato Excel (.xlsx).
+                    </p>
+                    <a href="{% url 'exportar_multas_excel' %}" class="btn btn-outline-primary">
+                        📥 Exportar Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outros cards podem ir aqui -->
+
+    </div>
+</div>
+{% endblock %}

@@ -15,6 +15,7 @@ from .utils import buscar_abastecimentos, buscar_abastecimentos_por_data, buscar
 from django.utils.text import slugify
 from itertools import chain
 from django.contrib.auth.models import User 
+from openpyxl import Workbook
 
 
 @login_required
@@ -582,3 +583,86 @@ def pagar_multa(request, pk):
 def detalhar_multa(request, pk):
     multa = get_object_or_404(Multa, pk=pk)
     return render(request, "controle/detalhar_multa.html", {"multa": multa})
+
+
+# Relatorios
+
+
+
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font
+from openpyxl.worksheet.hyperlink import Hyperlink
+from django.conf import settings
+from .models import Multa
+
+def exportar_multas_excel(request):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Multas"
+
+    # Cabeçalhos
+    ws.append([
+        'ID', 'Placa', 'Setor', 'Setor Descrição', 'Motorista',
+        'Infração', 'Valor', 'Gravidade',
+        'Data/Hora Infração', 'Local', 'Órgão Autuador',
+        'Status Multa', 'Status Pagamento', 'Prazo Pagamento', 'Data Registro',
+        'Documento Recebido', 'Comprovante Pagamento', 'Notificação Infração'
+    ])
+
+    # Estilo para links
+    link_font = Font(color="0000FF", underline="single")
+
+    multas = Multa.objects.select_related('veiculo', 'motorista', 'infracao')
+
+    for multa in multas:
+        row = [
+            multa.id,
+            multa.veiculo.placa if multa.veiculo else '',
+            multa.setor or '',
+            multa.setor_descricao or '',
+            multa.motorista.nome if multa.motorista else '',
+            multa.infracao.descricao if multa.infracao else '',
+            multa.valor if multa.infracao else '',
+            multa.gravidade if multa.infracao else '',
+            multa.data_hora_infracao.strftime('%d/%m/%Y %H:%M'),
+            multa.local,
+            multa.orgao_autuador,
+            multa.get_status_multa_display(),
+            multa.get_status_pagamento_display(),
+            multa.prazo_pagamento.strftime('%d/%m/%Y'),
+            multa.data_registro.strftime('%d/%m/%Y %H:%M'),
+            '', '', ''  # Reservando espaços para links
+        ]
+        ws.append(row)
+
+        # Index da linha atual
+        current_row = ws.max_row
+
+        # Construir URLs completas
+        domain = request.build_absolute_uri('/')[:-1]  # Remove a barra final
+        links = [
+            multa.documento_recebido.url if multa.documento_recebido else '',
+            multa.comprovante_pagamento.url if multa.comprovante_pagamento else '',
+            multa.notificacao_infracao.url if multa.notificacao_infracao else '',
+        ]
+
+        for i, file_url in enumerate(links):
+            if file_url:
+                cell = ws.cell(row=current_row, column=16 + i)
+                full_url = f"{domain}{file_url}"
+                cell.value = "📎 Abrir Documento"
+                cell.hyperlink = full_url
+                cell.font = link_font
+
+    # Retorna como arquivo para download
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=multas.xlsx'
+    wb.save(response)
+    return response
+
+
+def listar_relatorios(request):
+    return render(request, 'controle/listar_relatorios.html')   

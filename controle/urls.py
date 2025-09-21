@@ -40,4 +40,7 @@ urlpatterns = [
     path('multa/<int:pk>/editar/', views.atualizar_status_multa, name='editar_multa'),
     path('multas/<int:pk>/pagar/', views.pagar_multa, name='pagar_multa'),
     path('multas/<int:pk>/detalhar/', views.detalhar_multa, name='detalhar_multa'),
+    #LINKS PARA RELATORIOS
+    path('exportar-multas-excel/', views.exportar_multas_excel, name='exportar_multas_excel'),
+    path('relatorios/', views.listar_relatorios, name='listar_relatorios'),
 ]
