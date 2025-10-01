@@ -31,6 +31,7 @@ Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da
 ---
 
 ### 👨‍✈️ Cadastro de Motoristas
+![Cadastro de Motoristas](docs/ilustracao/condutor.png)
 - **Dados pessoais:** nome, CPF, RG, telefone, data de nascimento  
 - **CNH:** número, validade, categoria (A, B, C, D, E, etc.)  
 - **Upload da CNH digitalizada**  
@@ -46,7 +47,7 @@ Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da
 
 ---
 
-### 🛠️ Manutenção de Veículos
+### 🛠️ Manutenção de Veículos (em desenvolvimento)
 - Registro de revisões ou manutenções realizadas  
 - Quilometragem na manutenção  
 - Tipo de manutenção: troca de óleo, pneus, etc.  
@@ -74,6 +75,7 @@ Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da
 ---
 
 ### 📂 Auditoria e Histórico
+![Logs](docs/ilustracao/logs.png)
 - Histórico de alterações para todos os registros principais (motorista, veículo, multa, termo)  
 - Rastreabilidade de quem criou/modificou (usuário responsável)  
 
