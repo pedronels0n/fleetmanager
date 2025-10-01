@@ -13,7 +13,9 @@ Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da
 
 ## 🌐 Acesso ao Sistema
 🔗 **Ambiente de Teste:** [https://gestorfleet.com/controle/](https://gestorfleet.com/controle/)
-
+![Logs](docs/ilustracao/login.png)
+- **Usuarios:** testegit    
+- **Senha:** testegit
 ---
 
 ## 🧩 Módulos Principais
@@ -87,8 +89,8 @@ Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da
 - **Vinculos** (Motorista ↔ Veículo)
 - **Multas**
 - **Documentos**
-- **Manutencoes**
-- **Pedagios**
+- **Manutencoes** (Em desenvolvimento)
+- **Pedagios** (Em desenvolvimento)
 - **Usuarios**
 - **Termos** (PDFs gerados)
 
