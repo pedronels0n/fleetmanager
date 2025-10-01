@@ -19,7 +19,7 @@ Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da
 ## 🧩 Módulos Principais
 
 ### 🚘 Cadastro de Veículos
-![Cadastro de Veículos](docs/ilustracao/painel de veiculos.png)
+![Cadastro de Veículos](docs/ilustracao/painel-de-veiculos.png)
 - **Campos obrigatórios:** placa, RENAVAM, chassi, marca, modelo, tipo de frota, tipo de combustível  
 - **Upload de documentos obrigatórios:** CRLV, seguro  
 - **Classificação do modelo:** hatch, sedan, SUV, moto, ônibus, caminhão etc.  
