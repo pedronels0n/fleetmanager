@@ -1,8 +1,8 @@
-# 🚗 Sistema de Gestão de Frotas - Prefeitura de Lauro de Freitas/BA
+# 🚗 Sistema de Gestão de Frotas - Gestão Publica
 
 ## 🎯 Objetivo do Sistema
 
-O Sistema de Gestão de Frotas foi desenvolvido para proporcionar **controle total e eficiente dos veículos oficiais** da Prefeitura de Lauro de Freitas/BA. Ele permite o gerenciamento centralizado de veículos, motoristas, multas, abastecimentos, manutenções, documentos e auditoria, garantindo segurança, rastreabilidade e praticidade para os gestores públicos.
+O Sistema de Gestão de Frotas foi desenvolvido para proporcionar **controle total e eficiente dos veículos oficiais** da Prefeitura. Ele permite o gerenciamento centralizado de veículos, motoristas, multas, abastecimentos, manutenções, documentos e auditoria, garantindo segurança, rastreabilidade e praticidade para os gestores públicos.
 
 ---
 
@@ -86,7 +86,6 @@ O Sistema de Gestão de Frotas foi desenvolvido para proporcionar **controle tot
 - **Motorista**
 - **Multa**
 - **Abastecimento**
-- **ManutencaoVeiculo**
 - **TermoResponsabilidade**
 - **InfracaoTransito**
 - **ContaPagamento**
@@ -150,7 +149,7 @@ O Sistema de Gestão de Frotas foi desenvolvido para proporcionar **controle tot
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/segen-code/gestorfleet.git
+    git clone 
     cd gestorfleet
     ```
 
@@ -200,8 +199,11 @@ Abra uma issue ou envie um pull request com sugestões, correções ou novas fun
 
 ## 📝 Licença
 
-Este projeto é mantido pela Prefeitura de Lauro de Freitas/BA e SegenCode.  
-Uso restrito para fins institucionais.
+Este projeto é mantido pela SegenCode.  
+É disponibilizado para uso livre, podendo ser usado, modificado e distribuído livremente, inclusive para fins comerciais.  
+
+No entanto, a atribuição à SegenCode é apreciada.  
 
 ---
+
 
