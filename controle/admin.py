@@ -87,3 +87,5 @@ class InfracaoTransitoAdmin(ImportExportModelAdmin):
     list_filter = ('gravidade',)
 
 admin.site.register(InfracaoTransito, InfracaoTransitoAdmin)
+
+admin.site.register(Abastecimento)

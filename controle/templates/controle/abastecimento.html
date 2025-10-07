@@ -2,67 +2,103 @@
 {% block title %}Abastecimentos{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2 class="mb-4 text-dark fw-semibold">Abastecimentos</h2>
+<div class="container mt-4">
+  <!-- Cabeçalho moderno -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-fuel-pump-fill fs-2 text-warning"></i>
+      <h2 class="fw-bold mb-0 text-dark">Abastecimentos</h2>
+    </div>
+    <a href="{% url 'criar_abastecimento' %}" class="btn btn-success rounded-pill px-4 py-2 fw-semibold">
+      <i class="bi bi-plus-circle me-1"></i> Novo Abastecimento
+    </a>
+  </div>
 
-  <!-- Filtro -->
-  <form method="get" class="row g-3 align-items-end mb-5 p-3 bg-light rounded shadow-sm">
-    <div class="col-md-3">
+  <!-- Filtro minimalista -->
+  <form method="get" class="row g-2 align-items-end mb-4 p-3 bg-white rounded shadow-sm border">
+    <div class="col-12 col-md-3">
       <label for="data_inicio" class="form-label text-muted small">Data Início</label>
       <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio }}" class="form-control form-control-sm rounded-pill">
     </div>
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
       <label for="data_fim" class="form-label text-muted small">Data Fim</label>
       <input type="date" id="data_fim" name="data_fim" value="{{ data_fim }}" class="form-control form-control-sm rounded-pill">
     </div>
-    <div class="col-md-3 d-grid">
-      <button type="submit" class="btn btn-primary btn-sm rounded-pill fw-semibold">Filtrar</button>
+    <div class="col-12 col-md-3">
+      <label for="placa" class="form-label text-muted small">Placa</label>
+      <input type="text" id="placa" name="placa" value="{{ placa }}" class="form-control form-control-sm rounded-pill" placeholder="Placa do veículo">
+    </div>
+    <div class="col-12 col-md-3 d-grid">
+      <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold">
+        <i class="bi bi-search"></i> Filtrar
+      </button>
     </div>
   </form>
 
   <!-- Cards de Abastecimentos -->
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
     {% for a in abastecimentos %}
-    <div class="col">
-      <div class="card h-100 shadow-sm small">
-        <div class="card-header bg-dark text-white py-1 px-2">
-          {{ a.placa }} • {{ a.marca }} {{ a.modelo }} ({{ a.ano_veiculo }})
-        </div>
-        <div class="card-body py-2 px-2">
-          <p class="mb-1"><strong>Posto:</strong> {{ a.posto }}</p>
-          <p class="mb-1">
-        <strong>Combustível:</strong> {{ a.combustivel }} ({{ a.quantidadeLitros }} L)<br>
-        <strong>Valor:</strong> R$ {{ a.valor }} &nbsp; | &nbsp; 
-        <strong>Valor/Litro:</strong> R$ {{ a.valorLitro|floatformat:2 }}
-        </p>
-          <p class="mb-1"><strong>KM:</strong> {{ a.kmAnterior }} → {{ a.kmAtual }}</p>
-          <p class="mb-1"><strong>Cartão:</strong> {{ a.numeroCartao }}</p>
-          <p class="mb-1">
-            <strong>Status:</strong>
-            {% if a.status == "OK" %}
-              <span class="badge bg-success">OK</span>
-            {% elif a.status == "BLOQUEADA" %}
-              <span class="badge bg-danger">BLOQUEADA</span>
-              {% if a.ParametroBloqueio %}
-                <br><small class="text-danger">Motivo: {{ a.ParametroBloqueio }}</small>
+      <div class="col">
+        <div class="card h-100 shadow-sm small position-relative">
+          <div class="card-header bg-dark text-white py-1 px-2 d-flex justify-content-between align-items-center">
+            <span>
+              {{ a.veiculo.placa }} • {{ a.veiculo.marca }} {{ a.veiculo.modelo }} ({{ a.veiculo.ano }})
+            </span>
+          </div>
+          <div class="card-body py-2 px-2">
+            <div class="mb-1 d-flex justify-content-between align-items-center">
+              <span><strong>Data:</strong> {{ a.data|date:"d/m/Y" }}</span>
+              <span class="badge bg-warning text-dark border border-warning" style="font-size:0.95em;">
+                {{ a.get_tipo_combustivel_display }}
+              </span>
+            </div>
+            <div class="mb-1"><strong>KM:</strong> {{ a.km_anterior }} → {{ a.hodometro }}</div>
+            <div class="mb-1"><strong>Litros:</strong> {{ a.litros }} L</div>
+            <div class="mb-1"><strong>Valor Total:</strong> R$ {{ a.valor_total }}</div>
+            <div class="mb-1"><strong>Valor/Litro:</strong> R$ {{ a.valor_litro|floatformat:2 }}</div>
+            <div class="mb-1">
+              <strong>Média:</strong>
+              {% if a.media_km_litro %}
+                {% if a.media_km_litro > 10 %}
+                  <span class="badge bg-success">{{ a.media_km_litro|floatformat:2 }} km/L</span>
+                {% else %}
+                  <span class="badge bg-danger">{{ a.media_km_litro|floatformat:2 }} km/L</span>
+                {% endif %}
+              {% else %}
+                <span class="badge bg-secondary">-</span>
               {% endif %}
-            {% else %}
-              <span class="badge bg-secondary">{{ a.status }}</span>
+            </div>
+            <div class="mb-1"><strong>Motorista:</strong> 
+              {% if a.abastecido_por %}
+                {{ a.abastecido_por.nome }}
+              {% else %}
+                <span class="text-muted">Não informado</span>
+              {% endif %}
+            </div>
+            {% if a.observacao %}
+            <div class="mb-1"><strong>Observação:</strong> {{ a.observacao }}</div>
             {% endif %}
-          </p>
-          <p class="mb-1"><strong>Condutor:</strong> {{ a.condutor }} | CNH: {{ a.cnhcondutor }}</p>
-          <p class="mb-1"><strong>Código Abastecimento:</strong> {{ a.codAbastecimento }}</p>
+            <div class="mb-1 text-end">
+              <span class="text-muted" style="font-size:0.85em;">Posto: {{ a.posto }}</span>
+            </div>
+          </div>
+          <div class="card-footer text-muted py-1 px-2 d-flex justify-content-between align-items-center">
+            <small>Registrado em {{ a.created_at|date:"d/m/Y H:i" }}</small>
+            <div class="d-flex align-items-center">
+              <a href="{% url 'editar_abastecimento' a.id %}" class="btn btn-sm btn-outline-warning me-1" title="Editar">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <form method="post" action="{% url 'excluir_abastecimento' a.id %}" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este abastecimento?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+              <span class="ms-2 text-muted" style="font-size:0.85em;">#{{ a.id }}</span>
+            </div>
+          </div>
         </div>
-        <div class="card-footer text-muted py-1 px-2 d-flex justify-content-between align-items-center">
-    <small>{{ a.data }} {{ a.hora }}</small>
-    <a href="{% url 'detalhe_abastecimento' a.codAbastecimento %}" 
-       class="btn btn-sm btn-outline-primary p-1" 
-       target="_blank">
-        🔍
-    </a>
-</div>
       </div>
-    </div>
     {% empty %}
     <div class="col">
       <div class="alert alert-warning text-center">

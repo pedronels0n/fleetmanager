@@ -3,32 +3,38 @@
 {% block title %}Lista de Motoristas{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-    <div class="mb-2 mb-md-0">
-        <h2 class="fw-bold mb-1">Painel de Condutores</h2>
-        <small class="text-muted">Gerencie os motoristas cadastrados no sistema</small>
+<div class="container mt-4">
+  <!-- Cabeçalho moderno -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-person-badge fs-2 text-success"></i>
+      <h2 class="fw-bold mb-0 text-dark">Motoristas</h2>
     </div>
+    <a href="{% url 'criar_motorista' %}" class="btn btn-success rounded-pill px-4 py-2 fw-semibold shadow-sm">
+      <i class="bi bi-plus-circle me-1"></i> Adicionar Motorista
+    </a>
+  </div>
 
-    <div class="d-flex flex-wrap align-items-center">
-        <!-- Formulário de pesquisa -->
-        <form method="get" class="me-2 d-flex mb-2 mb-md-0">
-            <input type="text" name="q" class="form-control form-control-sm me-1" placeholder="Pesquisar motorista..." value="{{ request.GET.q }}">
-            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3">Pesquisar</button>
-        </form>
-
-        <!-- Botões de ordenação -->
-        <div class="btn-group me-2 mb-2 mb-md-0">
-            <a href="?ordenar=a-z{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">A-Z</a>
-            <a href="?ordenar=z-a{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Z-A</a>
-        </div>
-
-        <!-- Botão Adicionar -->
-        <a href="{% url 'criar_motorista' %}" class="btn btn-success btn-sm rounded-pill px-4 shadow-sm mb-2 mb-md-0">
-            + Adicionar
-        </a>
+  <!-- Filtro minimalista -->
+  <form method="get" class="row g-2 align-items-end mb-4 p-3 bg-white rounded shadow-sm border">
+    <div class="col-md-4">
+      <input type="text" name="q" class="form-control form-control-sm rounded-pill" placeholder="Pesquisar motorista..." value="{{ request.GET.q }}">
     </div>
-</div>
-<div class="row g-3">
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold">
+        <i class="bi bi-search"></i> Pesquisar
+      </button>
+    </div>
+    <div class="col-md-2 d-grid">
+      <a href="?ordenar=a-z{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline-secondary btn-sm rounded-pill fw-semibold">A-Z</a>
+    </div>
+    <div class="col-md-2 d-grid">
+      <a href="?ordenar=z-a{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" class="btn btn-outline-secondary btn-sm rounded-pill fw-semibold">Z-A</a>
+    </div>
+  </form>
+
+  <!-- Cards de motoristas -->
+  <div class="row g-3">
     {% for m in motoristas %}
     <div class="col-12 col-md-3"> <!-- 12 col = 1 card por linha, md-6 = 2 cards por linha em telas médias/grandes -->
         <div class="list-group-item d-flex justify-content-between align-items-center p-3 shadow-sm rounded" style="transition: transform 0.15s ease-in-out; background-color: white;">
@@ -78,6 +84,7 @@
     {% empty %}
     <p class="text-muted">Nenhum motorista cadastrado.</p>
     {% endfor %}
+  </div>
 </div>
 
 <!-- Hover suave nos cards -->
@@ -87,5 +94,4 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 </style>
-
 {% endblock %}

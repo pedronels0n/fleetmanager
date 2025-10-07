@@ -7,12 +7,10 @@
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
     <!-- Ícone principal para iOS -->
-<link rel="apple-touch-icon" sizes="180x180" href="{% static 'controle/img/favicon.png' %}">
-
-<!-- Ícones extras (opcional, mas recomendado) -->
-<link rel="apple-touch-icon" sizes="167x167" href="{% static 'controle/img/favicon.png' %}">
-<link rel="apple-touch-icon" sizes="152x152" href="{% static 'controle/img/favicon.png' %}">
-<link rel="apple-touch-icon" sizes="120x120" href="{% static 'controle/img/favicon.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'controle/img/favicon.png' %}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{% static 'controle/img/favicon.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'controle/img/favicon.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'controle/img/favicon.png' %}">
 
     <!-- Open Graph -->
     <meta property="og:title" content="FleetManager - Frotas Inteligente">
@@ -39,21 +37,10 @@
     <!-- CSS customizado -->
     <link rel="stylesheet" href="{% static 'controle/css/style.css' %}">
 
-    <!-- 💡 Estilo para o layout flexível (rodapé sticky) -->
     <style>
-        html, body {
-            height: 100%;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-        }
-
-        main {
-            flex: 1;
-        }
+        html, body { height: 100%; }
+        body { display: flex; flex-direction: column; margin: 0; }
+        main { flex: 1; }
     </style>
 </head>
 <body class="bg-light">
@@ -104,6 +91,10 @@
                     <!-- Logs -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logs_todos' %}">Logs</a>
+                    </li>
+                    <!-- Relatórios -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'listar_relatorios' %}">Relatórios</a>
                     </li>
                     {% endif %}
 

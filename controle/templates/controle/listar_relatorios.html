@@ -2,28 +2,33 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">📊 Relatórios</h2>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-bar-chart-fill fs-2 text-primary"></i>
+            <h2 class="fw-bold mb-0 text-dark">Relatórios</h2>
+        </div>
+    </div>
 
-    <div class="row">
+    <div class="row g-4">
         <!-- Card de Relatório de Multas -->
         <div class="col-md-4">
-            <div class="card border-primary shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    Relatório de Multas
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-gradient bg-primary text-white d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-excel fs-4"></i>
+                    <span>Relatório de Multas</span>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">
+                    <p class="card-text text-muted">
                         Exporte todas as multas cadastradas no sistema em formato Excel (.xlsx).
                     </p>
-                    <a href="{% url 'exportar_multas_excel' %}" class="btn btn-outline-primary">
-                        📥 Exportar Excel
+                    <a href="{% url 'exportar_multas_excel' %}" class="btn btn-outline-primary rounded-pill px-3">
+                        <i class="bi bi-download me-1"></i> Exportar Excel
                     </a>
                 </div>
             </div>
         </div>
 
         <!-- Outros cards podem ir aqui -->
-
     </div>
 </div>
 {% endblock %}

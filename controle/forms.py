@@ -1,5 +1,5 @@
 from django import forms
-from .models import Motorista, TermoResponsabilidade, Veiculo, Multa, Setor
+from .models import Motorista, TermoResponsabilidade, Veiculo, Multa, Setor, Abastecimento, ContaPagamento
 from django.contrib.auth.models import User, Group
 
 class VeiculoForm(forms.ModelForm):
@@ -189,3 +189,59 @@ class PagamentoMultaForm(forms.ModelForm):
             raise forms.ValidationError("Para marcar como pago é necessário anexar o comprovante.")
 
         return cleaned_data
+    
+
+class AbastecimentoForm(forms.ModelForm):
+    class Meta:
+        model = Abastecimento
+        # Campos incluídos no formulário (excluímos valor_litro porque ele é calculado)
+        fields = [
+            'veiculo',
+            'data',
+            'hodometro',
+            'litros',
+            'valor_total',
+            'posto',
+            'observacao',
+            'abastecido_por',
+            'tipo_combustivel',  # <-- Adicionado aqui
+        ]
+
+        # Widgets personalizados (opcional, mas melhora a usabilidade)
+        widgets = {
+            'data': forms.DateInput(
+                attrs={'type': 'date', 'class': 'form-control'},
+                format='%Y-%m-%d'  # <-- Adicione este parâmetro!
+            ),
+            'hodometro': forms.NumberInput(
+                attrs={'class': 'form-control', 'placeholder': 'Quilometragem atual'}
+            ),
+            'litros': forms.NumberInput(
+                attrs={'step': '0.01', 'class': 'form-control', 'placeholder': 'Litros abastecidos'}
+            ),
+            'valor_total': forms.NumberInput(
+                attrs={'step': '0.01', 'class': 'form-control', 'placeholder': 'Valor total do abastecimento'}
+            ),
+            'posto': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Nome do posto (opcional)'}
+            ),
+            'observacao': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Observações (opcional)'}
+            ),
+            'veiculo': forms.Select(attrs={'class': 'form-control'}),
+            'abastecido_por': forms.Select(attrs={'class': 'form-control'}),
+            'tipo_combustivel': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+
+class ContaPagamentoForm(forms.ModelForm):
+    class Meta:
+        model = ContaPagamento
+        fields = ['banco', 'agencia', 'conta_corrente', 'favorecido', 'cnpj']
+        widgets = {
+            'banco': forms.TextInput(attrs={'class': 'form-control'}),
+            'agencia': forms.TextInput(attrs={'class': 'form-control'}),
+            'conta_corrente': forms.TextInput(attrs={'class': 'form-control'}),
+            'favorecido': forms.TextInput(attrs={'class': 'form-control'}),
+            'cnpj': forms.TextInput(attrs={'class': 'form-control'}),
+        }

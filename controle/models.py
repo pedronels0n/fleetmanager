@@ -127,6 +127,12 @@ class Veiculo(models.Model):
         blank=True,
         null=True
     )
+    hodometro = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        help_text="Quilometragem atual do veículo"
+    )
 
     # -----------------------------
     # HISTÓRICO DE MOTORISTAS
@@ -432,3 +438,102 @@ class ContaPagamento(models.Model):
         return f"{self.favorecido}"
 
 
+from django.db import models
+
+class Abastecimento(models.Model):
+    # Veículo que foi abastecido
+    veiculo = models.ForeignKey(
+        'Veiculo',
+        on_delete=models.CASCADE,
+        related_name='abastecimentos'
+    )
+
+    # Data do abastecimento
+    data = models.DateField()
+
+    # Quilometragem registrada no momento do abastecimento
+    hodometro = models.PositiveIntegerField()
+
+    # Quantidade de combustível abastecido (em litros)
+    litros = models.DecimalField(max_digits=7, decimal_places=2)
+
+    # Valor total pago no abastecimento
+    valor_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # Valor por litro de combustível (calculado automaticamente)
+    valor_litro = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        editable=False  # Impede edição manual no admin e formulários
+    )
+
+    # Nome do posto (opcional)
+    posto = models.CharField(max_length=100, blank=True, null=True)
+
+    # Observações adicionais (opcional)
+    observacao = models.TextField(blank=True, null=True)
+
+    # Motorista responsável pelo abastecimento
+    abastecido_por = models.ForeignKey(
+        'Motorista',  # Altere para 'app_name.Motorista' se estiver em outro app
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='abastecimentos'
+    )
+
+    # Data de criação e atualização automática do registro
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Tipo de combustível abastecido
+    TIPO_COMBUSTIVEL_CHOICES = [
+        ('G', 'Gasolina'),
+        ('A', 'Álcool'),
+        ('D', 'Diesel'),
+        ('E', 'Elétrico'),
+        ('H', 'Híbrido'),
+        ('F', 'Flex'),
+    ]
+    tipo_combustivel = models.CharField(
+        max_length=1,
+        choices=TIPO_COMBUSTIVEL_CHOICES,
+        default='F',
+        help_text="Tipo de combustível abastecido"
+    )
+
+    class Meta:
+        # Ordenar abastecimentos da data mais recente para a mais antiga
+        ordering = ['-data']
+
+    def __str__(self):
+        # Representação legível no admin ou listas
+        return f"Abastecimento de {self.veiculo.placa} em {self.data}"
+
+    def save(self, *args, **kwargs):
+        # Calcula o valor por litro automaticamente antes de salvar
+        if self.litros > 0 and self.valor_total:
+            self.valor_litro = round(self.valor_total / self.litros, 2)
+        else:
+            self.valor_litro = 0
+
+        # Atualiza o hodômetro do veículo
+        if self.veiculo and self.hodometro > self.veiculo.hodometro:
+            self.veiculo.hodometro = self.hodometro
+            self.veiculo.save()
+
+        super().save(*args, **kwargs)
+
+    def km_anterior(self):
+        # Busca o abastecimento anterior deste veículo
+        anterior = Abastecimento.objects.filter(
+            veiculo=self.veiculo,
+            data__lt=self.data
+        ).order_by('-data').first()
+        return anterior.hodometro if anterior else 0
+
+    def media_km_litro(self):
+        km_ant = self.km_anterior()
+        if self.litros > 0:
+            return round((self.hodometro - km_ant) / float(self.litros), 2)
+        return None

@@ -102,41 +102,26 @@
         <div class="card shadow-sm border-0">
           <div class="card-body p-2">
             <p class="mb-1">
-              <strong>Data:</strong> {{ a.data }}<br>
-              <strong>Hora:</strong> {{ a.hora }}
+              <strong>Data:</strong> {{ a.data|date:"d/m/Y" }}
             </p>
             <p class="mb-1">
-              <strong>Status:</strong>
-              {% if a.status == "OK" %}
-                <span class="badge bg-success">OK</span>
-              {% elif a.status == "BLOQUEADA" %}
-                <span class="badge bg-danger">BLOQUEADA</span>
-                {% if a.ParametroBloqueio %}
-                  <br><small class="text-danger">Motivo: {{ a.ParametroBloqueio }}</small>
-                {% endif %}
-              {% else %}
-                <span class="badge bg-secondary">{{ a.status }}</span>
-              {% endif %}
+              <strong>Hodômetro:</strong> {{ a.hodometro }} km
             </p>
             <p class="mb-1">
-              <strong>Km:</strong> {{ a.kmAnterior }} → {{ a.kmAtual }}
+              <strong>Combustível:</strong> {{ a.get_tipo_combustivel_display }}
             </p>
             <p class="mb-1">
-              <strong>Combustível:</strong> {{ a.combustivel }}
-            </p>
-            <p class="mb-1">
-              <strong>Litros:</strong> {{ a.quantidadeLitros }}<br>
-              <strong>Valor:</strong> R$ {{ a.valor }}
+              <strong>Litros:</strong> {{ a.litros }}<br>
+              <strong>Valor:</strong> R$ {{ a.valor_total }}
             </p>
             <p class="mb-0">
               <strong>Posto:</strong> {{ a.posto }}
             </p>
-             <a href="{% url 'detalhe_abastecimento' a.codAbastecimento %}" 
-     class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-1 p-1"
-     target="_blank"
-     title="Detalhes">
-      🔍
-  </a>
+            <a href="{% url 'editar_abastecimento' a.id %}" 
+               class="btn btn-sm btn-outline-primary position-absolute top-0 end-0 m-1 p-1"
+               title="Editar">
+              <i class="bi bi-pencil"></i>
+            </a>
           </div>
         </div>
       </div>
