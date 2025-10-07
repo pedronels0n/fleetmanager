@@ -1,133 +1,207 @@
 # 🚗 Sistema de Gestão de Frotas - Prefeitura de Lauro de Freitas/BA
 
 ## 🎯 Objetivo do Sistema
-Desenvolver um sistema web para a **gestão eficiente da frota de veículos** da Prefeitura de Lauro de Freitas, permitindo:
-- Controle de veículos e motoristas
-- Registro e acompanhamento de multas
-- Solicitação e liberação de pedágios
-- Emissão de documentos oficiais em PDF
-- Geração de relatórios e consultas detalhadas
-- Auditoria completa das ações realizadas
+
+O Sistema de Gestão de Frotas foi desenvolvido para proporcionar **controle total e eficiente dos veículos oficiais** da Prefeitura de Lauro de Freitas/BA. Ele permite o gerenciamento centralizado de veículos, motoristas, multas, abastecimentos, manutenções, documentos e auditoria, garantindo segurança, rastreabilidade e praticidade para os gestores públicos.
 
 ---
 
-## 🌐 Acesso ao Sistema
-🔗 **Ambiente de Teste:** [https://gestorfleet.com/controle/](https://gestorfleet.com/controle/)
-![Logs](docs/ilustracao/login.png)
-- **Usuarios:** testegit    
-- **Senha:** testegit
+## 🧩 Módulos e Funcionalidades
+
+### 1. Cadastro de Veículos
+
+- Registro completo: placa, RENAVAM, chassi, marca, modelo, ano, cor, tipo de frota (próprio/locado), tipo de combustível, tipo de modelo (hatch, sedan, SUV, etc.).
+- Upload de documentos obrigatórios: CRLV, seguro.
+- Classificação por setor/departamento (Secretarias).
+- Histórico de motoristas vinculados (muitos para muitos).
+- Controle de status: ativo, inativo, manutenção, vendido.
+- Auditoria automática de criação e modificações (via `django-simple-history`).
+
+### 2. Cadastro de Motoristas
+
+- Dados pessoais: nome, CPF, RG, telefone, data de nascimento.
+- CNH: número, validade, categoria (A, B, C, D, E, etc.).
+- Upload da CNH digitalizada.
+- Status: ativo ou inativo.
+- Relacionamento com veículos (muitos para muitos).
+
+### 3. Vinculação Veículo ↔ Motorista
+
+- Associação dinâmica de motoristas a veículos.
+- Geração automática de Termo de Responsabilidade em PDF.
+- Registro de histórico de vínculos.
+
+### 4. Gestão de Multas
+
+- Registro detalhado de infrações: placa, local, órgão autuador, valor, pontos, tipo de infração.
+- Relacionamento com motorista (opcional).
+- Upload de documentos: auto de infração, notificação, comprovante, memorando.
+- Status da multa: enviado/recebido.
+- Status de pagamento: pendente/pago.
+- Integração com tipos de infrações (`InfracaoTransito`).
+- Validações automáticas: impede salvar multa como recebida/paga sem documentos.
+- Associação de conta de pagamento para cada multa.
+
+### 5. Abastecimentos
+
+- Registro de abastecimentos por veículo.
+- Quilometragem, litros, valor total, valor por litro (calculado automaticamente).
+- Motorista responsável, posto, observações.
+- Histórico de abastecimentos e cálculo de média km/litro.
+- Atualização automática do hodômetro do veículo.
+
+### 6. Manutenção de Veículos (em desenvolvimento)
+
+- Registro de revisões/manutenções realizadas.
+- Quilometragem, tipo de manutenção, data, observações.
+
+### 7. Emissão de Documentos
+
+- Termo de responsabilidade (motorista ↔ veículo).
+- Notificação de multa.
+- Memorando da multa.
+- Todos os documentos gerados e armazenados em PDF.
+
+### 8. Auditoria e Histórico
+
+- Histórico de alterações para todos os registros principais (motorista, veículo, multa, termo).
+- Rastreabilidade de quem criou/modificou (usuário responsável).
+
+### 9. Relatórios
+
+- Exportação de multas para Excel (.xlsx).
+- Visualização de dados e estatísticas da frota.
+
+### 10. Usuários e Permissões
+
+- Cadastro e gerenciamento de usuários.
+- Controle de permissões por perfil.
+- Auditoria de ações.
+
 ---
 
-## 🧩 Módulos Principais
+## 🗄️ Modelo de Dados (Principais Tabelas)
 
-### 🚘 Cadastro de Veículos
-![Cadastro de Veículos](docs/ilustracao/painel-de-veiculos.png)
-- **Campos obrigatórios:** placa, RENAVAM, chassi, marca, modelo, tipo de frota, tipo de combustível  
-- **Upload de documentos obrigatórios:** CRLV, seguro  
-- **Classificação do modelo:** hatch, sedan, SUV, moto, ônibus, caminhão etc.  
-- **Relacionamento com setores (Secretarias)**  
-- **Histórico de motoristas vinculados**  
-- **Controle de status:** ativo, inativo, manutenção, vendido  
-- **Auditoria de criação e modificações** (via `django-simple-history`)  
-
----
-
-### 👨‍✈️ Cadastro de Motoristas
-![Cadastro de Motoristas](docs/ilustracao/condutor.png)
-- **Dados pessoais:** nome, CPF, RG, telefone, data de nascimento  
-- **CNH:** número, validade, categoria (A, B, C, D, E, etc.)  
-- **Upload da CNH digitalizada**  
-- **Status:** ativo ou inativo  
-- **Relacionamento com veículos**  
-
----
-
-### 🔗 Vinculação Veículo ↔ Motorista
-- Associação de motoristas a veículos (**muitos para muitos**)  
-- Geração automática de **Termo de Responsabilidade em PDF**  
-- Registro de histórico de vínculos  
-
----
-
-### 🛠️ Manutenção de Veículos (em desenvolvimento)
-- Registro de revisões ou manutenções realizadas  
-- Quilometragem na manutenção  
-- Tipo de manutenção: troca de óleo, pneus, etc.  
-- Observações gerais  
-
----
-
-### 🚨 Gestão de Multas
-- Registro detalhado de infrações (**placa, local, órgão, valor, pontos**)  
-- Relacionamento com motorista (opcional)  
-- **Upload de documentos:** auto de infração, notificação, comprovante, memorando  
-- **Status da multa:** enviado / recebido  
-- **Status de pagamento:** pendente / pago  
-- Integração com **tipos de infrações (InfracaoTransito)**  
-- **Validações automáticas:** impede salvar multa como recebida/paga sem documentos  
-
----
-
-### 🧾 Emissão de Documentos
-- Termo de responsabilidade (motorista ↔ veículo)  
-- Notificação de multa  
-- Memorando da multa  
-- **Todos os documentos são gerados e armazenados em PDF**  
-
----
-
-### 📂 Auditoria e Histórico
-![Logs](docs/ilustracao/logs.png)
-- Histórico de alterações para todos os registros principais (motorista, veículo, multa, termo)  
-- Rastreabilidade de quem criou/modificou (usuário responsável)  
-
----
-
-## 🗄️ Modelo de Dados (Simplificado)
-- **Veiculos**
-- **Motoristas**
-- **Vinculos** (Motorista ↔ Veículo)
-- **Multas**
-- **Documentos**
-- **Manutencoes** (Em desenvolvimento)
-- **Pedagios** (Em desenvolvimento)
-- **Usuarios**
-- **Termos** (PDFs gerados)
+- **Veiculo**
+- **Motorista**
+- **Multa**
+- **Abastecimento**
+- **ManutencaoVeiculo**
+- **TermoResponsabilidade**
+- **InfracaoTransito**
+- **ContaPagamento**
+- **Setor**
+- **Usuário (Django)**
 
 ---
 
 ## 📌 Funcionalidades Técnicas
-- Interface web responsiva  
-- Autenticação e permissões por perfil de usuário  
-- Upload e download de arquivos (PDF, imagens, DOC)  
-- Geração automatizada de PDFs  
-- Backup automático dos dados  
-- Auditoria de ações (quem fez o quê e quando)  
+
+- Interface web responsiva (Bootstrap).
+- Autenticação e permissões por perfil de usuário.
+- Upload e download de arquivos (PDF, imagens).
+- Geração automatizada de PDFs (WeasyPrint).
+- Exportação de dados para Excel (openpyxl).
+- Backup automático dos dados.
+- Auditoria de ações (django-simple-history).
+- Filtros avançados e busca em todos os módulos.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
-- **Backend:** Django (Python)  
-- **Banco de Dados:** PostgreSQL  
-- **Servidor de Aplicação:** Gunicorn  
-- **Servidor Web:** Nginx  
-- **Frontend:** HTML5, CSS3, JavaScript (Bootstrap/React opcional)  
-- **Relatórios/PDFs:** ReportLab / WeasyPrint  
-- **Controle de Versão:** Git + GitHub  
+
+- **Backend:** Django (Python)
+- **Banco de Dados:** PostgreSQL
+- **Servidor de Aplicação:** Gunicorn
+- **Servidor Web:** Nginx
+- **Frontend:** HTML5, CSS3, JavaScript, Bootstrap
+- **Relatórios/PDFs:** WeasyPrint, openpyxl
+- **Controle de Versão:** Git + GitHub
 
 ---
 
 ## 🔒 Segurança
-- **Fail2Ban** configurado para proteção contra ataques de força bruta  
-- **HTTPS** habilitado com **Certbot (Let's Encrypt)**  
-- **Controle de permissões** por perfil de usuário  
-- **Auditoria de ações** para rastreabilidade  
+
+- **Fail2Ban** para proteção contra ataques de força bruta.
+- **HTTPS** habilitado com Certbot (Let's Encrypt).
+- **Controle de permissões** por perfil de usuário.
+- **Auditoria de ações** para rastreabilidade.
 
 ---
 
+## 🌐 Acesso ao Sistema
+
+- **Ambiente de Teste:** [https://gestorfleet.com/controle/](https://gestorfleet.com/controle/)
+- **Usuário:** testegit
+- **Senha:** testegit
+
+---
+
+## 📦 Instalação e Execução
+
 ### Pré-requisitos
-- Python 3.10+  
-- Django 4.x  
-- PostgreSQL  
-- Git  
+
+- Python 3.10+
+- Django 5.x
+- PostgreSQL
+- Git
+
+### Instalação
+
+1. Clone o repositório:
+    ```bash
+    git clone https://github.com/segen-code/gestorfleet.git
+    cd gestorfleet
+    ```
+
+2. Crie e ative o ambiente virtual:
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3. Instale as dependências:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Configure o banco de dados PostgreSQL e as variáveis de ambiente (`.env`).
+
+5. Execute as migrações:
+    ```bash
+    python manage.py migrate
+    ```
+
+6. Crie um superusuário:
+    ```bash
+    python manage.py createsuperuser
+    ```
+
+7. Inicie o servidor:
+    ```bash
+    python manage.py runserver
+    ```
+
+---
+
+## 📚 Documentação
+
+- O código está documentado nos arquivos de models, views e forms.
+- Para dúvidas sobre endpoints, consulte o arquivo `urls.py` ou acesse `/admin/` para visualizar os modelos.
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas!  
+Abra uma issue ou envie um pull request com sugestões, correções ou novas funcionalidades.
+
+---
+
+## 📝 Licença
+
+Este projeto é mantido pela Prefeitura de Lauro de Freitas/BA e SegenCode.  
+Uso restrito para fins institucionais.
+
+---
 
